@@ -330,7 +330,7 @@ def vote_results(conf):
 
 def vote_file_init():
         if initialize_file(VOTE_FILE):
-                globals()['POLLINGS'] = eval(read_file(VOTE_FILE))
+                globals()['POLLINGS'] = load_file(VOTE_FILE, {})
         else:
                 Print('\n\nError: can`t create vote.dat!', color2)
 

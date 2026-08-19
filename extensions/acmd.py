@@ -50,7 +50,7 @@ def handler_acmd_add(type, source, parameters):
  global acmds 
  DBPATH='dynamic/'+groupchat+'/acmd.txt'
  if check_file(groupchat,'acmd.txt'):
-  localdb = eval(read_file(DBPATH))
+  localdb = load_file(DBPATH, {})
   localdb[key] = srs
   write_file(DBPATH, str(localdb))
   if not groupchat in acmds:
@@ -115,7 +115,7 @@ def handler_acmd_del(type, source, parameters):
    del acmds[groupchat][parameters]
    DBPATH='dynamic/'+groupchat+'/acmd.txt'
    if check_file(groupchat,'acmd.txt'):
-    localdb = eval(read_file(DBPATH))
+    localdb = load_file(DBPATH, {})
     if parameters.strip() in localdb:
      del localdb[parameters.strip()]
      write_file(DBPATH, str(localdb))
@@ -165,7 +165,7 @@ def handler_acmd_msg(raw, type, source, parameters):
   return
 #   DBPATH='dynamic/'+source[1]+'/acmd.txt'
 #   if check_file(source[1],'acmd.txt'):
-#    localdb = eval(read_file(DBPATH))
+#    localdb = load_file(DBPATH, {})
 #    acmds[source[1]]=localdb
     
  parameters=parameters.lower().strip()
@@ -205,7 +205,7 @@ def handler_acmd_call(type, source, parameters):
 #  if not check_file(source[1],'acmd.txt'):
 #   write_file(DBPATH, u'{}')
 #  if not source[1] in acmds.keys():
-#   acmds[source[1]] = eval(read_file(DBPATH))
+#   acmds[source[1]] = load_file(DBPATH, {})
   
   if len(parameters.split(' ')) > 1:
    actype=parameters.split()[0].lower()
@@ -239,7 +239,7 @@ def acmd_init(groupchat):
  global acmds
  DBPATH='dynamic/'+groupchat+'/acmd.txt'
  if check_file(groupchat,'acmd.txt'):
-  localdb = eval(read_file(DBPATH))
+  localdb = load_file(DBPATH, {})
   num=len(localdb.keys())
   if num:  
    acmds[groupchat]=localdb

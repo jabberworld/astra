@@ -152,7 +152,7 @@ def talkers_save():
 def talkers_init(conf):
         TALKERS[conf] = {'msgs': 0, 'jids': {}}
         if check_file(conf, 'talkers.txt'):
-                TALKERS[conf]['jids'] = eval(read_file('dynamic/'+conf+'/talkers.txt'))
+                TALKERS[conf]['jids'] = load_file('dynamic/'+conf+'/talkers.txt', {})
         else:
                 delivery(u'Внимание! Не удалось создать talkers.txt для "%s"!' % (conf))
 

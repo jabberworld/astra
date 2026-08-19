@@ -45,7 +45,7 @@ def command_help(type, source, body):
                                         else:
                                                 plug = COMMANDS[command]['plug']
                                                 inst = COMMAND_HANDLERS[command].__name__
-                                                fr = eval(read_file("help/%s" % plug))[inst]
+                                                fr = load_file("help/%s" % plug, {})[inst]
                                         mess = fr['desc']
                                         mess += u'\nИспользование: '+fr['syntax']+u'\nПримеры:'
                                         for example in fr['examples']:

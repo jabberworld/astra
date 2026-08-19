@@ -13,7 +13,7 @@ def handler_buket(type, source, nick):
                         nick = source[2]
                 if nick != handler_botnick(source[1]):
                         if nick in GROUPCHATS[source[1]]:
-                                flowers = eval(read_file('static/buket.txt'))['buket']
+                                flowers = load_file('static/buket.txt', {})['buket']
                                 action = random.choice(flowers)
                                 msg(source[1], u'/me '+action % (nick))
                         else:
@@ -29,7 +29,7 @@ def handler_drink(type, source, nick):
                         nick = source[2]
                 if nick != handler_botnick(source[1]):
                         if nick in GROUPCHATS[source[1]]:
-                                alko = eval(read_file('static/buket.txt'))['drink']
+                                alko = load_file('static/buket.txt', {})['drink']
                                 action = random.choice(alko)
                                 msg(source[1], u'/me '+action % (nick))
                         else:

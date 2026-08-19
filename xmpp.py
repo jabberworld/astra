@@ -735,6 +735,7 @@ class Client(object):
 		self._stream = None
 		self._loop = None
 		self._connected = False
+		self._tls = False
 		self._jid_full = ""
 		self._password = ""
 		self._server_tuple = None
@@ -760,6 +761,7 @@ class Client(object):
 			self._server_tuple = (server, self.port)
 		else:
 			self._server_tuple = None
+			return False
 		self._use_srv = bool(use_srv)
 		return True
 
@@ -813,6 +815,7 @@ class Client(object):
 		stream.add_event_handler("message", self._on_message)
 		stream.add_event_handler("presence", self._on_presence)
 		stream.add_event_handler("disconnected", self._on_disconnected)
+		stream.add_event_handler("tls_success", self._on_tls_success)
 		cb = Callback("legacy_iq", MatchXPath("{%s}iq" % NS_IQ), self._on_iq)
 		try:
 			stream.register_handler(cb)
@@ -848,6 +851,20 @@ class Client(object):
 
 	def _on_disconnected(self, ev):
 		self._connected = False
+
+	def _on_tls_success(self, ev):
+		self._tls = True
+
+	def isTls(self):
+		if self._tls:
+			return True
+		stream = self._stream
+		if not stream:
+			return False
+		try:
+			return isinstance(stream.socket, __import__("ssl").SSLSocket)
+		except Exception:
+			return False
 
 	def sendInitPresence(self):
 		stream = self._stream

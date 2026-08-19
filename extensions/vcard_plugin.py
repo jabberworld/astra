@@ -555,7 +555,7 @@ def iusr_load(groupchat):
 
 def handler_infa_work(type,source,parameters):
         INFA = 'dynamic/'+source[1]+'/infa.txt'
-        juk = eval(read_file(INFA))
+        juk = load_file(INFA, {})
         if 'on' in juk:
                 del juk['on']
                 write_file(INFA,str(juk))
@@ -602,7 +602,7 @@ def handler_info_usr(groupchat, nick, afl, role):
 def iusr_append(groupchat,jid):
         try:
                 INFA = 'dynamic/'+groupchat+'/infa.txt'
-                juk = eval(read_file(INFA))
+                juk = load_file(INFA, {})
                 if not jid in juk:
                         juk[jid]={}
                         write_file(INFA,str(juk))
@@ -625,7 +625,7 @@ def vcheck_on(type,source,parameters):
         if not check_file(source[1],'infa.txt'):
                 return
         INFA = 'dynamic/'+source[1]+'/infa.txt'
-        juk = eval(read_file(INFA))
+        juk = load_file(INFA, {})
         if 'vcheck' in juk:
                 del juk['vcheck']
                 write_file(INFA,str(juk))

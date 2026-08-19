@@ -123,7 +123,7 @@ def seabatl_msg(raw, type, source, parameters):
                                                                                                 fp=open(SEA_BAT, 'w')
                                                                                                 fp.write('{}')
                                                                                                 fp.close()
-                                                                                        txt=eval(read_file(SEA_BAT))
+                                                                                        txt=load_file(SEA_BAT, {})
                                                                                         if not jid in txt:
                                                                                                 txt[jid]={}
                                                                                                 txt[jid]={'n':1}
@@ -201,7 +201,7 @@ def sea_bat_get(type, source, parameters):
                 fp.write('{}')
                 fp.close()
         try:
-                txt=eval(read_file(SEA_BAT))
+                txt=load_file(SEA_BAT, {})
                 if not txt:
                         reply(type, source, u'Статистики нет!')
                         return

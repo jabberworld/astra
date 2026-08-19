@@ -75,7 +75,7 @@ def boltun_control(type, source, body):
 
 def boltun_work_init(conf):
         if check_file(conf, 'flood.txt', "'on'"):
-                FLOOD[conf] = eval(read_file('dynamic/%s/flood.txt' % (conf)))
+                FLOOD[conf] = load_file('dynamic/%s/flood.txt' % (conf), '')
         else:
                 FLOOD[conf] = 'on'
                 delivery(u'Внимание! Не удалось создать flood.txt для "%s"!' % (conf))

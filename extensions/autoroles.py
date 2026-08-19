@@ -179,7 +179,7 @@ def handler_avisitor(type, source, body):
 
 def handler_autoroles_resave(conf, key, list):
         filename = 'dynamic/'+conf+'/autoroles.txt'
-        base = eval(read_file(filename))
+        base = load_file(filename, {})
         base[key] = list
         write_file(filename, str(base))
 
@@ -194,7 +194,7 @@ def handler_autoroles_work(conf, nick, afl, role):
 
 def autoroles_init(conf):
         if check_file(conf, 'autoroles.txt', str({'amoder': [], 'akick': [], 'avisitor': []})):
-                base = eval(read_file('dynamic/'+conf+'/autoroles.txt'))
+                base = load_file('dynamic/'+conf+'/autoroles.txt', {})
                 amoder, akick, avisitor = base['amoder'], base['akick'], base['avisitor']
         else:
                 amoder, akick, avisitor = [], [], []

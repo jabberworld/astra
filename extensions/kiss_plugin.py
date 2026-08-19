@@ -36,7 +36,7 @@ def handler_kiss(type, source, parameters):
                         if parameters in GROUPCHATS[source[1]]:
                                 kisses=[]
                                 kisses.extend(poke_work(source[1]))
-                                kisses.extend(eval(read_file('static/kisses.txt'))['kiss'])
+                                kisses.extend(load_file('static/kisses.txt', {})['kiss'])
                                 rep = random.choice(kisses)
                                 msg(source[1],u'/me '+rep % parameters)
                         else:
@@ -50,7 +50,7 @@ def handler_kiss(type, source, parameters):
 def poke_work(gch,action=None,phrase=None):
         DBPATH='dynamic/'+gch+'/kisses.txt'
         if check_file(gch,'kisses.txt'):
-                pokedb = eval(read_file(DBPATH))
+                pokedb = load_file(DBPATH, {})
                 if action==1:
                         for x in range(1, 21):
                                 if str(x) in pokedb.keys():

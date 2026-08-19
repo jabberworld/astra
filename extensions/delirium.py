@@ -14,7 +14,7 @@ def handler_poke(type, source, nick):
                                 if nick in GROUPCHATS[source[1]]:
                                         pokes = []
                                         pokes.extend(poke_work(source[1]))
-                                        pokes.extend(eval(read_file('static/delirium.txt'))['poke'])
+                                        pokes.extend(load_file('static/delirium.txt', {})['poke'])
                                         repl = random.choice(pokes)
                                         msg(source[1], u'/me '+repl % (nick))
                                 else:
@@ -67,7 +67,7 @@ def poke_work(conf, action = None, phrase = None):
         if check_file(conf, 'delirium.txt'):
                 base = 'dynamic/'+conf+'/delirium.txt'
                 try:
-                        pokedb = eval(read_file(base))
+                        pokedb = load_file(base, {})
                 except:
                         pokedb = {}
                 if action == 1:

@@ -208,7 +208,7 @@ def handler_atrans_control(type, source, body):
 
 def atrans_init(conf):
 	if check_file(conf, 'atrans.txt', "'off'"):
-		state = eval(read_file('dynamic/'+conf+'/atrans.txt'))
+		state = load_file('dynamic/'+conf+'/atrans.txt', '')
 	else:
 		state = 'on'
 		delivery(u'Внимание! Не удалось создать atrans.txt для "%s"!' % (conf))

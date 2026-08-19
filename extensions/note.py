@@ -10,7 +10,7 @@
 note_file = 'dynamic/notepad.txt'
 
 def handler_note(type, source, body):
-        NOTE = eval(read_file(note_file))
+        NOTE = load_file(note_file, {})
         jid = handler_jid(source[0])
         if body:
                 args = body.split()

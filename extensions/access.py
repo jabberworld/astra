@@ -131,7 +131,7 @@ def change_conf_access(conf, jid, level = 0):
 
 def load_conf_access_levels(conf):
  if check_file(conf, 'access.txt'):
-  CONFACCESS[conf] = eval(read_file('dynamic/'+conf+'/access.txt'))
+  CONFACCESS[conf] = load_file('dynamic/'+conf+'/access.txt', {})
  else:
   delivery(u'Внимание! Не удалось создать access.txt для "%s"!' % (conf))
 

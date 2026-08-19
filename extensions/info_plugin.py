@@ -110,7 +110,7 @@ def handler_verch_get(coze, res, groupchat, nick):
 def banver_subscribe(type, source, parameters):
         BANVER = 'dynamic/'+source[1]+'/banver.txt'
         fp = open(BANVER, 'r')
-        juk = eval(read_file(BANVER))
+        juk = load_file(BANVER, {})
         fp.close()
         if parameters:
                 if parameters in juk:
@@ -125,7 +125,7 @@ def banver_subscribe(type, source, parameters):
 def banver_show(type, source, parameters):
     BANVER = 'dynamic/'+source[1]+'/banver.txt'
     fp = open(BANVER, 'r')
-    juk = eval(read_file(BANVER))
+    juk = load_file(BANVER, {})
     fp.close()
     if len(juk) == 0:
       reply(type, source, u'Список пуст!')
@@ -143,7 +143,7 @@ def banver_unsubscribe(type, source, parameters):
         BANVER = 'dynamic/'+source[1]+'/banver.txt'
         if parameters:
                 fp = open(BANVER, 'r')
-                juk = eval(read_file(BANVER))
+                juk = load_file(BANVER, {})
                 fp.close()
                 if parameters in juk:
                         del juk[parameters]

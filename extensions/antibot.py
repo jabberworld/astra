@@ -116,7 +116,7 @@ def exceptions_cleanup():
 
 def antibot_exceptions_init():
         if initialize_file(EXCEPT_LIST, '[]'):
-                globals()['EXCEPTIONS'] = eval(read_file(EXCEPT_LIST))
+                globals()['EXCEPTIONS'] = load_file(EXCEPT_LIST, [])
         else:
                 Print('\n\nError: can`t create antibot exceptions file!', color2)
 ##	exceptions_cleanup()

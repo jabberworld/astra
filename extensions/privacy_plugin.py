@@ -68,7 +68,7 @@ def set_privacy():
         fp.write('{}')
         fp.close()
         return
-    txt=eval(read_file(PRIVACY_FILE))
+    txt=load_file(PRIVACY_FILE, [])
     if txt:
         for x in txt:
             if x in PRIVACY_LIST:
@@ -210,7 +210,7 @@ def start_privacy_list(type, source, parameters):
             JCON.send(iq)
             reply(type, source, u'ok')
             try:
-                txt=eval(read_file(PRIVACY_FILE))
+                txt=load_file(PRIVACY_FILE, [])
                 txt[s[1].lower()]={}
                 write_file(PRIVACY_FILE, str(txt))
             except:
@@ -228,7 +228,7 @@ def start_privacy_list(type, source, parameters):
             JCON.send(iq)
             reply(type, source, u'удалил '+s[1])
             try:
-                txt=eval(read_file(PRIVACY_FILE))
+                txt=load_file(PRIVACY_FILE, [])
                 if s[1].lower() in txt:
                     txt[s[1].lower()]={}
                     write_file(PRIVACY_FILE, str(txt))

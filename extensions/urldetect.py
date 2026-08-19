@@ -76,7 +76,7 @@ def urlWatcherConfig(mType, source, args):
 
 def urlWatcherConfig_load():
         if initialize_file("dynamic/urlWatcher.txt", str(list())):
-                globals()["urlDetect"] = eval(read_file("dynamic/urlWatcher.txt"))
+                globals()["urlDetect"] = load_file("dynamic/urlWatcher.txt", [])
 
 register_message_handler(urlWatcher)
 register_stage0_init(urlWatcherConfig_load)

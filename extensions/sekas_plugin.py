@@ -25,7 +25,7 @@ def handler_sexall(type, source, parameters):
             s=random.choice(SP)
             SP.remove(s)
             pokes=[]
-            pokes.extend(eval(read_file('static/sexs.txt'))['sex'])
+            pokes.extend(load_file('static/sexs.txt', {})['sex'])
             z=random.choice(pokes)
             if s!=handler_botnick(source[1]):
                 msg(source[1], '/me '+z %s)

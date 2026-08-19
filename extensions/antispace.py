@@ -45,7 +45,7 @@ def handler_antispace_control(type, source, body):
 
 def antispace_init(conf):
         if check_file(conf, 'antispace.txt', "'off'"):
-                state = eval(read_file('dynamic/'+conf+'/antispace.txt'))
+                state = load_file('dynamic/'+conf+'/antispace.txt', '')
         else:
                 state = 'off'
                 delivery(u'Внимание! Не удалось создать antispace.txt для "%s"!' % (conf))

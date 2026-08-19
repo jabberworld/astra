@@ -160,7 +160,7 @@ def muc_filter(type,source,parameters):
         if not source[1] in GROUPCHATS:
                 return
         if check_file(source[1],'muc_filt.txt'):
-                txt=eval(read_file('dynamic/'+source[1]+'/muc_filt.txt'))
+                txt=load_file('dynamic/'+source[1]+'/muc_filt.txt', {})
 #                txt=eval(fp.read())
 #                fp.close()
         if not txt:
@@ -234,7 +234,7 @@ def muc_filter(type,source,parameters):
         
 def muc_filter_load(groupchat):
         if check_file(groupchat,'muc_filt.txt'):
-                txt=eval(read_file('dynamic/'+groupchat+'/muc_filt.txt'))
+                txt=load_file('dynamic/'+groupchat+'/muc_filt.txt', {})
                 if not txt:
                         txt['blacklist']=[]
                         txt['rek']='0'

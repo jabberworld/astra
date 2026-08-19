@@ -151,7 +151,10 @@ def check_file(conf = None, file = None, data = "{}"):
         if conf:
                 filename = chkFile('dynamic/%s/%s' % (conf, file))
         else:
-                filename = 'dynamic/%s' % (file)
+                if file.startswith('dynamic/'):
+                        filename = chkFile(file)
+                else:
+                        filename = chkFile('dynamic/%s' % file)
         return initialize_file(filename, data)
 
 def initialize_file(name, data = "{}"):
@@ -159,6 +162,17 @@ def initialize_file(name, data = "{}"):
         if len(name.split('/')) >= 5:
                 return False
         if os.path.exists(name):
+                if data:
+                        try:
+                                with open(name, "r") as fp:
+                                        exist = fp.read().strip()
+                                if not exist:
+                                        with open(name, "w") as fp:
+                                                INFA['fcr'] += 1
+                                                fp.write(data)
+                        except:
+                                lytic_crashlog(initialize_file)
+                                return False
                 return True
         try:
                 folder = os.path.dirname(name)
@@ -180,6 +194,18 @@ def read_file(name):
                 data = data[1:]
         return data
 
+def load_file(name, default = None):
+        try:
+                data = read_file(name).strip()
+        except Exception:
+                return default
+        if not data:
+                return default
+        try:
+                return eval(data)
+        except Exception:
+                return default
+
 def write_file(name, data, mode = "w"):
         with wsmph:
                 with open(chkFile(name), mode) as fp:
@@ -188,7 +214,7 @@ def write_file(name, data, mode = "w"):
 
 ## Crashfile writer.
 def lytic_crashlog(handler, command = None, comment = None):
-        DIR, handler, Number, error_body = "feillog", handler.__name__, (len(ERRORS.keys()) + 1), format_exc()
+        DIR, handler, Number, error_body = "faillog", handler.__name__, (len(ERRORS.keys()) + 1), format_exc()
         text = str()
         if globals().get("JCON") and JCON.isConnected():
                 if command:
@@ -325,7 +351,7 @@ def register_command_handler(instance, command, category = [], access = 0, desc 
 ## New command handler.
 def command_handler(instance, access = 0, plug = "default"):
         try:
-                command = eval(read_file("help/%s" % plug))[instance.__name__]["cmd"]
+                command = load_file("help/%s" % plug, {})[instance.__name__]["cmd"]
         except:
                 print_exc()
                 Print("\nPlugin \"%s\" has no help." % plug, color2)
@@ -572,20 +598,20 @@ def load_plugins():
 ## Other.
 def load_roster_config():
         if initialize_file(ROSTER_FILE, str(RSTR)):
-                globals()['RSTR'] = eval(read_file(ROSTER_FILE))
+                globals()['RSTR'] = load_file(ROSTER_FILE, {})
         else:
                 Print('\n\nError: roster config file is not exist!', color2)
 
 def load_quests():
         if os.path.exists(QUESTIONS_FILE):
-                globals()['QUESTIONS'] = eval(read_file(QUESTIONS_FILE))
+                globals()['QUESTIONS'] = load_file(QUESTIONS_FILE, {})
         else:
                 Print('\n\nError: questions file is not exist!', color2)
 
 def join_chats():
         if initialize_file(GROUPCHATS_FILE):
                 try:
-                        CONFS = eval(read_file(GROUPCHATS_FILE))
+                        CONFS = load_file(GROUPCHATS_FILE, {})
                 except KeyboardInterrupt:
                         raise KeyboardInterrupt("Interrupt (Ctrl+C)")
                 except:
@@ -643,7 +669,7 @@ def handler_jid(instance):
 def save_conflist(conf, nick = None, code = None):
         if initialize_file(GROUPCHATS_FILE):
                 try:
-                        list = eval(read_file(GROUPCHATS_FILE))
+                        list = load_file(GROUPCHATS_FILE, {})
                 except:
                         list = {}
                 if conf not in list:
@@ -737,7 +763,7 @@ def upkeep():
 ## Access handlers.
 def load_access_levels():
         if initialize_file(GLOBACCESS_FILE):
-                globals()['GLOBACCESS'] = eval(read_file(GLOBACCESS_FILE))
+                globals()['GLOBACCESS'] = load_file(GLOBACCESS_FILE, {})
         else:
                 Print('\n\nError: access file is not exist!', color2)
 
@@ -881,7 +907,7 @@ def change_bot_status(conf, text, status):
         JCON.send(Presence)
 
 def handler_iq_send(conf, item_name, item, afrls, afrl, rsn = None):
-        stanza = xmpp.Iq(to = conf, typ = 'set')
+        stanza = xmpp.Iq(to = conf, typ = 'set', id = str(INFA['outiq'] + 1))
         INFA['outiq'] += 1
         query = xmpp.Node('query')
         query.setNamespace(xmpp.NS_MUC_ADMIN)
@@ -1335,22 +1361,20 @@ def Connect():
         else:
                 CONNECT = JCON.connect((SERVER, PORT), None, False, True)
         if CONNECT:
-                if SECURE and CONNECT != 'tls':
-                        Print('\nWarning: unable to estabilish secure connection - TLS failed!', color2)
-                else:
-                        Print('\nConnection is OK', color3)
-                Print('Using: %s' % str(JCON.isConnected()), color4)
+                Print('\nConnection is OK', color3)
         else:
                 Exit("\nCan't Connect.\nSleep for 30 seconds", 0, 30)
-        Print('\nAuthentication plese wait...', color4)
+        Print('\nAuthentication please wait...', color4)
         AUTHENT = JCON.auth(USERNAME, PASSWORD, RESOURCE)
         if AUTHENT:
-                if AUTHENT != 'sasl':
-                        Print('\nWarning: unable to perform SASL auth. Old authentication method used!', color2)
-                else:
-                        Print('Auth is OK', color3)
+                Print('Auth is OK', color3)
         else:
                 Exit('\nAuth Error: %s %s\nMaybe, incorrect jid or password?' % (repr(JCON.lastErr), repr(JCON.lastErrCode)), 0, 12)
+        if SECURE:
+                if JCON.isTls():
+                        Print('TLS: enabled', color3)
+                else:
+                        Print('TLS: not established', color2)
         JCON.sendInitPresence()
         JCON.RegisterHandler("message", MESSAGE_PROCESSING)
         JCON.RegisterHandler("presence", PRESENCE_PROCESSING)
@@ -1411,7 +1435,9 @@ class NoIqAnswer(Exception):
 def main():
         Print('\n\n--> BOT STARTED\n\n\nChecking PID...', color4)
         if os.path.exists(PID_FILE):
-                CACHE = eval(read_file(PID_FILE))
+                CACHE = load_file(PID_FILE, {})
+                if not isinstance(CACHE, dict) or 'PID' not in CACHE:
+                        CACHE = {'PID': BOT_PID, 'START': time.time(), 'REST': []}
                 PID = CACHE['PID']
                 if PID != BOT_PID:
                         killed = "PID: %d - has been killed!" % (PID)

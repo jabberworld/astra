@@ -463,7 +463,7 @@ def handler_order_filt(type, source, body):
 
 def order_init(conf):
         if check_file(conf, 'order.txt', str(ORDERS)):
-                config = eval(read_file('dynamic/'+conf+'/order.txt'))
+                config = load_file('dynamic/'+conf+'/order.txt', {})
         else:
                 config = ORDERS
                 delivery(u'Внимание! Не удалось создать order.txt для "%s"!' % (conf))

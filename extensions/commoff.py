@@ -115,7 +115,7 @@ def handler_common(type, source, body):
 
 def get_commoff(conf):
         if check_file(conf, 'commoff.txt', '[]'):
-                COMMOFF[conf] = eval(read_file('dynamic/'+conf+'/commoff.txt'))
+                COMMOFF[conf] = load_file('dynamic/'+conf+'/commoff.txt', [])
         else:
                 delivery(u'Внимание! Не удалось создать commoff.txt для "%s"!' % (conf))
 

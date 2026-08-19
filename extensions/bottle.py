@@ -27,9 +27,9 @@ def handler_bottle(type, source, player):
                                         else:
                                                   msg(source[1], u'/me закрутил бутылочку... Она указала на -> '+user)
                                         cache = []
-                                        cache.extend(eval(read_file('static/bottle.txt')))
+                                        cache.extend(load_file('static/bottle.txt', []))
                                         try:
-                                                base = eval(read_file('dynamic/'+source[1]+'/bottle.txt'))
+                                                base = load_file('dynamic/'+source[1]+'/bottle.txt', {})
                                         except:
                                                 base = {}
                                         for key in base:
@@ -56,7 +56,7 @@ def handler_bottle_control(type, source, body):
         if source[1] in GROUPCHATS:
                 bottle_file = 'dynamic/'+source[1]+'/bottle.txt'
                 try:
-                        base = eval(read_file(bottle_file))
+                        base = load_file(bottle_file, {})
                 except:
                         base = {}
                 if body:

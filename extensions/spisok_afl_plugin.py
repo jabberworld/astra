@@ -88,7 +88,7 @@ def handler_sp_answ(coze, res, type, source):
 def hnd_getold_list(type,source):
         if check_file(source[1],'banlist.txt'):
                 file='dynamic/'+source[1]+'/banlist.txt'
-                txt=eval(read_file(file))
+                txt=load_file(file, [])
                 n=0
                 if txt:
                         for x in txt:
@@ -105,7 +105,7 @@ def any_copy_banl(type,source,parameters):
         chat=parameters.split()[1]
         try:
                 file='dynamic/'+chat+'/banlist.txt'
-                txt=eval(read_file(file))
+                txt=load_file(file, [])
         except:
                 reply(type,source,u'база '+chat+u' не найдена!')
                 return
@@ -180,7 +180,7 @@ def handler_banlist_answ(coze, res, type, source, parameters):
                         listall=listjid+listserv
                         if check_file(source[1],'banlist.txt'):
                                 file='dynamic/'+source[1]+'/banlist.txt'
-                                txt=eval(read_file(file))
+                                txt=load_file(file, [])
                                 if parameters.count(u'серв'):
                                         if serv>0:
                                                 txt=listserv.split()

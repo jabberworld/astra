@@ -100,7 +100,7 @@ def quiz_ask_new_question(conf, ans):
 
 def quiz_answer_question(conf, nick, answer):
         BASE = 'dynamic/'+conf+'/quiz.cfg'
-        QUIZ_SCORES = eval(read_file(BASE))
+        QUIZ_SCORES = load_file(BASE, {})
         if conf in QUIZ_CURRENT_ANSWER:
                 jid = handler_jid(conf+'/'+nick)
                 answer1 = QUIZ_CURRENT_ANSWER[conf].lower()
@@ -208,7 +208,7 @@ def sort(conf, mas, sort = 1, count = 10):
 
 def quiz_list_scores(conf, sort_ = 1, count = 10):
         BASE = 'dynamic/'+conf+'/quiz.cfg'
-        QUIZ_SCORES = eval(read_file(BASE))
+        QUIZ_SCORES = load_file(BASE, {})
         if conf in QUIZ_SCORES:
                 if QUIZ_SCORES[conf]:
                         if conf in QUIZ_IDLENESS:
@@ -224,7 +224,7 @@ def handler_quiz_start(type, source, body):
         if source[1] in GROUPCHATS:
                 if source[1] not in QUIZ_CURRENT_ANSWER:
                         BASE = 'dynamic/'+source[1]+'/quiz.cfg'
-                        QUIZ_SCORES = eval(read_file(BASE))
+                        QUIZ_SCORES = load_file(BASE, {})
                         if source[1] not in QUIZ_SCORES:
                                 QUIZ_SCORES[source[1]] = {}
                                 write_file(BASE, str(QUIZ_SCORES))
@@ -315,7 +315,7 @@ def handler_quiz_answer(type, source, body):
 def handler_quiz_scores(type, source, body):
         if source[1] in GROUPCHATS:
                 BASE = 'dynamic/'+source[1]+'/quiz.cfg'
-                QUIZ_SCORES = eval(read_file(BASE))
+                QUIZ_SCORES = load_file(BASE, {})
                 if source[1] in  QUIZ_SCORES:
                         if QUIZ_SCORES[source[1]]:
                                 if source[1] in QUIZ_CURRENT_ANSWER:
@@ -363,7 +363,7 @@ def handler_quiz_help(type, source, body):
 def handler_quiz_base_del(type, source, body):
         if source[1] in GROUPCHATS:
                 BASE = 'dynamic/'+source[1]+'/quiz.cfg'
-                QUIZ_SCORES = eval(read_file(BASE))
+                QUIZ_SCORES = load_file(BASE, {})
                 if body == '':
                         if source[1] in QUIZ_SCORES:
                                 del QUIZ_SCORES[source[1]]

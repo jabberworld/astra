@@ -99,7 +99,7 @@ def handler_admin_rejoin1(type, source, body):
         reason = 'Command "rejoin" from %s' % (source[2])
         if body.count(' '):
                 reason += '\nReason: %s' % body[(body.find(' ') + 1):].strip()
-        chats = eval(read_file(GROUPCHATS_FILE))
+        chats = load_file(GROUPCHATS_FILE, {})
         if conf in chats:
                 leave_groupchat(conf, reason)
                 time.sleep(2)
@@ -289,7 +289,7 @@ def handler_command_stat(type, source, body):
 
 def load_conf_prefix(conf):
         if check_file(conf, 'prefix.txt', "'none'"):
-                prefix = eval(read_file('dynamic/%s/prefix.txt' % (conf)))
+                prefix = load_file('dynamic/%s/prefix.txt' % (conf), 'none')
                 if prefix != 'none':
                         PREFIX[conf] = prefix
         else:

@@ -45,7 +45,7 @@ def millionaire_load(groupchat,jid):
                 MILLIONAIRE[groupchat]={}
         DBPATH='dynamic/'+groupchat+'/millionaire.txt'
         if check_file(groupchat,'millionaire.txt'):
-                localdb = eval(read_file(DBPATH))
+                localdb = load_file(DBPATH, {})
                 if jid in localdb:
                         MILLIONAIRE[groupchat][jid]=localdb[jid]
                 else:
@@ -54,7 +54,7 @@ def millionaire_load(groupchat,jid):
 def millionaire_write(groupchat,jid):
         global MILLIONAIRE
         if check_file(groupchat,'millionaire.txt'):
-                localdb = eval(read_file('dynamic/'+groupchat+'/millionaire.txt'))
+                localdb = load_file('dynamic/'+groupchat+'/millionaire.txt', {})
                 localdb[jid]=MILLIONAIRE[groupchat][jid]
                 write_file('dynamic/'+groupchat+'/millionaire.txt', str(localdb))
         else:

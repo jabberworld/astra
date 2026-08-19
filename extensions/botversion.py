@@ -7,7 +7,7 @@ Caps = 'http://miranda-im.org/caps'
 CapsVer = '%s.%s' % (BOT_VER, CORE_MODE)
 
 def botversion(t,s,p):
-   VERSION_BOT = eval(read_file(VER_FILENAME))
+   VERSION_BOT = load_file(VER_FILENAME, {})
    if not p:
       reply(t,s,u'Ботверсия: \nИмя: '+str(NONAME)+u'\nВерсия: '+str(BOT_VER)+u'\nРевизия: '+str(BOT_REV)+u' (r.'+str(CORE_MODE)+u')\nКлиент: '+str(os_name))
       return
@@ -27,7 +27,7 @@ def botver_state2_init():
    global VERSION_BOT
    for conf in GROUPCHATS.keys():
                    if initialize_file(VER_FILENAME, '{}'):
-                      VERSION_BOT = eval(read_file(VER_FILENAME))
+                      VERSION_BOT = load_file(VER_FILENAME, {})
 
 register_stage2_init(botver_state2_init)
 register_command_handler(botversion, 'шифруйся', [], 100, 'Меняет имя версии бота.', '', [''])

@@ -145,7 +145,7 @@ def handler_userinfa_control(type, source, body):
 
 def userinfa_init(conf):
         if check_file(conf, 'userinfa.txt', "'off'"):
-                state = eval(read_file('dynamic/'+conf+'/userinfa.txt'))
+                state = load_file('dynamic/'+conf+'/userinfa.txt', '')
         else:
                 state = 'off'
                 delivery(u'Внимание! Не удалось создать userinfa.txt для "%s"!' % (conf))

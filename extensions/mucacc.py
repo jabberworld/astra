@@ -332,7 +332,7 @@ def command_fullunban(mType, source, jid):
 
 def banbase_init():
         if initialize_file(BanBaseFile, "{}"):
-                globals()["BanBase"] = eval(read_file(BanBaseFile))
+                globals()["BanBase"] = load_file(BanBaseFile, {})
         else:
                 Print('\n\nError: can`t create banbase.txt!', color2)
 

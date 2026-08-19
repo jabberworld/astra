@@ -30,7 +30,7 @@ def alias_exec_add_join(t, s, p):
         if int(p) in ALIAS_JOIN[s[1]].keys():
             del ALIAS_JOIN[s[1]][int(p)]
             reply(t, s, u'ok')
-            db=eval(read_file(ALIAS_FILE))
+            db=alias_load_db()
             del db['join'][s[1]][int(p)]
             write_file(ALIAS_FILE, str(db))
             return
@@ -117,7 +117,7 @@ def alias_exec_add_msg(t, s, p):
         if int(p) in ALIASS[s[1]].keys():
             del ALIASS[s[1]][int(p)]
             reply(t, s, u'ok')
-            db=eval(read_file(ALIAS_FILE))
+            db=alias_load_db()
             del db['msg'][s[1]][int(p)]
             write_file(ALIAS_FILE, str(db))
             return
@@ -189,7 +189,7 @@ def alias_exec_add_msg(t, s, p):
         reply(t, s, u'ok!')
 
 def alias_append(chat, tt, p, n):
-    db=eval(read_file(ALIAS_FILE))
+    db=alias_load_db()
     if not chat in db[tt]: db[tt][chat] = {}
     if not n in db[tt][chat]: db[tt][chat][n] = {}
     db[tt][chat][n] = p
@@ -288,6 +288,21 @@ def alias_adm_check(r, t, s, p):
         ALIAS_JOIN[chat][n]=al
         alias_append(chat, 'join', al, n)
 
+def alias_load_db():
+    try:
+        db = load_file(ALIAS_FILE, {})
+    except Exception:
+        db = {'msg': {}, 'join': {}}
+        write_file(ALIAS_FILE, str(db))
+    if not isinstance(db, dict):
+        db = {'msg': {}, 'join': {}}
+    if not 'msg' in db.keys():
+        db['msg'] = {}
+    if not 'join' in db.keys():
+        db['join'] = {}
+    return db
+
+
 def alias_init():
     global ALIASS
     global ALIAS_JOIN
@@ -295,13 +310,7 @@ def alias_init():
         db_file(ALIAS_FILE)
     else:
         check_file(file=ALIAS_FILE)
-    db=eval(read_file(ALIAS_FILE))
-    if not 'msg' in db.keys():
-        db['msg']={}
-        write_file(ALIAS_FILE, str(db))
-    if not 'join' in db.keys():
-        db['join']={}
-        write_file(ALIAS_FILE, str(db))
+    db = alias_load_db()
     ALIASS = db['msg'].copy()
     ALIAS_JOIN = db['join'].copy()
 

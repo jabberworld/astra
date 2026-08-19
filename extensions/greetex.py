@@ -63,7 +63,7 @@ def atjoin_greetex(conf, nick, afl, role):
 
 def greetex_init(conf):
         if check_file(conf, 'greetex.txt'):
-                list = eval(read_file('dynamic/%s/greetex.txt' % (conf)))
+                list = load_file('dynamic/%s/greetex.txt' % (conf), {})
         else:
                 list = {}
                 delivery(u'Внимание! Не удалось создать greetex.txt для "%s"!' % (conf))

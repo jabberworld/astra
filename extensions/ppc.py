@@ -12,7 +12,7 @@ def handler_ppc(type, source, nick):
                 if nick:
                         if nick != handler_botnick(source[1]):
                                 if nick in GROUPCHATS[source[1]]:
-                                        ppc = eval(read_file('static/delirium.txt'))['ppc']
+                                        ppc = load_file('static/delirium.txt', {})['ppc']
                                         action = random.choice(ppc)
                                         msg(source[1], u'/me '+action % (nick))
                                 else:

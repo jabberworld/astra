@@ -17,7 +17,7 @@ def handler_wtf_global(type, source, body):
                 args = body.split('=', 1)
                 if len(args) == 2:
                         try:
-                                globaldb = eval(read_file(WTF_FILE))
+                                globaldb = load_file(WTF_FILE, {})
                         except:
                                 globaldb = {}
                         key, value = args[0].lower().strip(), args[1].strip()
@@ -44,11 +44,11 @@ def handler_wtf_lokal(type, source, body):
                         if len(args) == 2:
                                 base = 'dynamic/'+source[1]+'/localdb.txt'
                                 try:
-                                        globaldb = eval(read_file(WTF_FILE))
+                                        globaldb = load_file(WTF_FILE, {})
                                 except:
                                         globaldb = {}
                                 try:
-                                        localdb = eval(read_file(base))
+                                        localdb = load_file(base, {})
                                 except:
                                         localdb = {}
                                 key, value = args[0].lower().strip(), args[1].strip()
@@ -87,11 +87,11 @@ def handler_wtf_public(type, source, body):
                         if timer >= 15:
                                 base = 'dynamic/'+source[1]+'/localdb.txt'
                                 try:
-                                        globaldb = eval(read_file(WTF_FILE))
+                                        globaldb = load_file(WTF_FILE, {})
                                 except:
                                         globaldb = {}
                                 try:
-                                        localdb = eval(read_file(base))
+                                        localdb = load_file(base, {})
                                 except:
                                         localdb = {}
                                 key = body.lower().strip()
@@ -134,11 +134,11 @@ def handler_wtf_private(type, source, body):
                                                 tojid = source[0]
                                         base = 'dynamic/'+source[1]+'/localdb.txt'
                                         try:
-                                                globaldb = eval(read_file(WTF_FILE))
+                                                globaldb = load_file(WTF_FILE, {})
                                         except:
                                                 globaldb = {}
                                         try:
-                                                localdb = eval(read_file(base))
+                                                localdb = load_file(base, {})
                                         except:
                                                 localdb = {}
                                         key = ckey.lower().strip()
@@ -168,11 +168,11 @@ def handler_wtf_search(type, source, body):
                 if source[1] in GROUPCHATS:
                         base = 'dynamic/'+source[1]+'/localdb.txt'
                         try:
-                                globaldb = eval(read_file(WTF_FILE))
+                                globaldb = load_file(WTF_FILE, {})
                         except:
                                 globaldb = {}
                         try:
-                                localdb = eval(read_file(base))
+                                localdb = load_file(base, {})
                         except:
                                 localdb = {}
                         repl, global_list, local_list, text = '', [], [], body.lower()
@@ -206,11 +206,11 @@ def handler_wtf_all(type, source, body):
         if source[1] in GROUPCHATS:
                 base = 'dynamic/'+source[1]+'/localdb.txt'
                 try:
-                        globaldb = eval(read_file(WTF_FILE))
+                        globaldb = load_file(WTF_FILE, {})
                 except:
                         globaldb = {}
                 try:
-                        localdb = eval(read_file(base))
+                        localdb = load_file(base, {})
                 except:
                         localdb = {}
                 repl, global_col, global_list, local_col, local_list = '', 0, '', 0, ''
@@ -247,7 +247,7 @@ def handler_wtf_export(type, source, body):
                         base = False
                 if base:
                         try:
-                                base = eval(read_file(base))
+                                base = load_file(base, {})
                         except:
                                 base = {}
                         text = ''

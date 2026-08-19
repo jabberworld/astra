@@ -66,7 +66,7 @@ def handler_alias_add(type, source, parameters):
                         if not has_access(source, real_access, source[1]):
                                 reply(type, source, u'Необходимый доступ для этой команды:'+str(real_access))
                                 return
-                        txt=eval(read_file('dynamic/'+source[1]+'/al.txt'))
+                        txt=load_file('dynamic/'+source[1]+'/al.txt', {})
                         if len(txt)>200:
                                 reply(type, source, u'Более 20-ти алиасов запрещено!')
                                 return
@@ -79,7 +79,7 @@ def handler_alias_add(type, source, parameters):
 def alias_init(chat):
         global ALIAS
         if not check_file(chat,'al.txt'): return
-        txt=eval(read_file('dynamic/'+chat+'/al.txt'))
+        txt=load_file('dynamic/'+chat+'/al.txt', {})
         if txt:
                 if not chat in ALIAS.keys():
                         ALIAS[chat]={}
@@ -88,7 +88,7 @@ def alias_init(chat):
 
 def handler_alias_del(type, source, parameters):
         if not source[1] in GROUPCHATS or not check_file(source[1],'al.txt'): return
-        txt=eval(read_file('dynamic/'+source[1]+'/al.txt'))
+        txt=load_file('dynamic/'+source[1]+'/al.txt', {})
         if txt:
                 if parameters.lower() in txt:
                         del txt[parameters.lower()]
@@ -99,7 +99,7 @@ def handler_alias_del(type, source, parameters):
 
 def handler_alias_list(type, source, parameters):
         if not source[1] in GROUPCHATS: return
-        txt=eval(read_file('dynamic/'+source[1]+'/al.txt'))
+        txt=load_file('dynamic/'+source[1]+'/al.txt', {})
         if not txt:
                 reply(type, source, u'Пусто!')
                 return

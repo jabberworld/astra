@@ -40,7 +40,7 @@ def rasklad1(t,s,p):
    time.sleep(3)
    reply(t,s,u'Пока я тасую колоду, подумайте еще раз о своем вопросе.')
    time.sleep(60)
-   TARO = eval(read_file('static/taro.txt'))
+   TARO = load_file('static/taro.txt', [])
    time.sleep(3)
    mk = [u'Прямая:\n',u'Перевернутая:\n']
    mes = random.choice(mk)
@@ -57,7 +57,7 @@ def rasklad2(t,s,p):
    time.sleep(3)
    reply(t,s,u'Пока я тасую колоду, подумайте еще раз о своем вопросе.')
    time.sleep(40)
-   TARO = eval(read_file('static/taro.txt'))
+   TARO = load_file('static/taro.txt', [])
    mk = [u'Прямая:\n',u'Перевернутая:\n']
    mes = random.choice(mk)
    mes += random.choice(TARO)

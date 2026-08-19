@@ -228,7 +228,7 @@ def snow_load():
         file=open(SNOW_DB, 'w')
         file.write('{}')
         file.close()
-    data=eval(read_file(SNOW_DB))
+    data=load_file(SNOW_DB, {})
     SNOW_USER=data
     for x in SNOW_USER.keys():
         if x.count('@') and not x.split('@')[0] in SNOW_SYS['nick'].keys():
@@ -283,7 +283,7 @@ def snow_warm(type, source, parameters):
             
 
 def snow_exp(jid, b=1):
-    data=eval(read_file(SNOW_DB))
+    data=load_file(SNOW_DB, {})
     if not jid in data.keys():
         data[jid]={'exp':1}
     else:
@@ -380,7 +380,7 @@ def snow_msg(raw, type, source, parameters):
 def snow_game_top(type, source, parameters):
         nick, l, DB = '', '', []
         try:
-                txt=eval(read_file(SNOW_DB))
+                txt=load_file(SNOW_DB, [])
         except:
                 reply(type, source, u'ошибка чтения БД')
                 return

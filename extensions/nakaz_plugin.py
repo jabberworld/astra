@@ -38,8 +38,8 @@ def handler_nakaz(type, source, parameters):
                                 nakazes1=[]
                                 nakazes.extend(poke_work(source[1]))
                                 nakazes1.extend(poke_work(source[1]))
-                                nakazes.extend(eval(read_file('static/nakazes.txt'))['nakaz'])
-                                nakazes1.extend(eval(read_file('static/nakazes.txt'))['nakaz1'])
+                                nakazes.extend(load_file('static/nakazes.txt', {})['nakaz'])
+                                nakazes1.extend(load_file('static/nakazes.txt', {})['nakaz1'])
                                 rep = random.choice(nakazes)
                                 rep1 = random.choice(nakazes1)
                                 if source[1] not in POL_SEX.keys():
@@ -57,7 +57,7 @@ def handler_nakaz(type, source, parameters):
 def poke_work(gch,action=None,phrase=None):
         DBPATH='dynamic/'+gch+'/nakazes.txt'
         if check_file(gch,'nakazes.txt'):
-                pokedb = eval(read_file(DBPATH))
+                pokedb = load_file(DBPATH, {})
                 if action==1:
                         for x in range(1, 21):
                                 if str(x) in pokedb.keys():

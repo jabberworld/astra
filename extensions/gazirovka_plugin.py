@@ -36,7 +36,7 @@ def handler_kiss_gaz(type, source, parameters):
                         if parameters in GROUPCHATS[source[1]]:
                                 gazes=[]
                                 gazes.extend(poke_work(source[1]))
-                                gazes.extend(eval(read_file('static/gazes.txt'))['gaz'])
+                                gazes.extend(load_file('static/gazes.txt', {})['gaz'])
                                 rep = random.choice(gazes)
                                 msg(source[1],u'/me '+rep % parameters)
                         else:
@@ -50,7 +50,7 @@ def handler_kiss_gaz(type, source, parameters):
 def poke_work_gaz(gch,action=None,phrase=None):
         DBPATH='dynamic/'+gch+'/gazes.txt'
         if check_file(gch,'gazes.txt'):
-                pokedb = eval(read_file(DBPATH))
+                pokedb = load_file(DBPATH, {})
                 if action==1:
                         for x in range(1, 21):
                                 if str(x) in pokedb.keys():

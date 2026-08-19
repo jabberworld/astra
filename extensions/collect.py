@@ -231,7 +231,7 @@ def handler_amsg_blacklist(type, source, body):
 
 def amsg_blacklist_init():
         if initialize_file(BLACK_LIST, '[]'):
-                globals()['AMSGBL'] = eval(read_file(BLACK_LIST))
+                globals()['AMSGBL'] = load_file(BLACK_LIST, [])
         else:
                 Print('\n\nError: can`t create black list file!', color2)
 

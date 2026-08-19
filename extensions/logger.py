@@ -207,7 +207,7 @@ def logFileInit(chat):
         cfg = {"theme": LoggerCfg["theme"], "enabled": False, "file": ""}
         Subjs[chat] = {'body': '', 'time': 0}
         if check_file(chat, logCacheFile, str(cfg)):
-                cfg = eval(read_file("dynamic/%s/%s" % (chat, logCacheFile)))
+                cfg = load_file("dynamic/%s/%s" % (chat, logCacheFile), {})
         else:
                 delivery(u"Внимание! Не удалось создать файл \"dynamic/%s/%s\"!" % (chat, logCacheFile))
         logCfg[chat] = cfg
@@ -219,7 +219,7 @@ def logFileInit(chat):
 
 def init_logger():
         if initialize_file(logConfigFile, str(LoggerCfg)):
-                LoggerCfg.update(eval(read_file(logConfigFile)))
+                LoggerCfg.update(load_file(logConfigFile, {}))
                 if LoggerCfg["enabled"]:
                         if not os.path.isdir(LoggerCfg["dir"]):
                                 try:
@@ -296,7 +296,7 @@ def logSetStateMain(mType, source, argv):
                                                 LEAVE_HANDLERS.remove(handler)
                                 name = logFileInit.__name__
                                 try:
-                                        command = eval(read_file("help/logger"))[logSetState.__name__]["cmd"]
+                                        command = load_file("help/logger", {})[logSetState.__name__]["cmd"]
                                 except:
                                         delivery(u"Внимание! Не удалось загрузить файл помощи логгера.")
                                 else:

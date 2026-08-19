@@ -63,7 +63,7 @@ def handler_spamjid_go(type,source,parameters):
 
 def spam_serv(type, source, parameters):
   SPAMS = 'static/spamservi.txt'
-  dcc = eval(read_file(SPAMS))
+  dcc = load_file(SPAMS, [])
   if parameters :
     if parameters in dcc:
       dcc.remove(parameters)

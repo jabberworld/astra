@@ -173,7 +173,7 @@ def show_statconfs(type, source, body):
 
 def statconfs_init():
         if initialize_file(STATCONFS_FILE):
-                STATCONFS['confs'] = eval(read_file(STATCONFS_FILE))
+                STATCONFS['confs'] = load_file(STATCONFS_FILE, {})
         else:
                 Print('\n\nError: can`t create statconfs.txt!', color2)
 

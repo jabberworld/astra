@@ -11,6 +11,16 @@ COLOR = [u'красный', u'зеленый', u'синий', u'голубень
 
 PROVOD = {}
 
+def color_norm(s):
+        return (s or u'').strip().lower().replace(u'ё', u'е')
+
+def bomb_key_for(nick):
+        t = color_norm(nick)
+        for key in PROVOD:
+                if color_norm(key) == t:
+                        return key
+        return None
+
 def bomb(type, source, args):
         if source[1] in GROUPCHATS:
                 if args:
@@ -29,7 +39,7 @@ def bomb(type, source, args):
                                 if len(provoda) < 2 or random.randrange(1, 10) >= 7:
                                         provoda.append(prv)
                         provod = random.choice(provoda)
-                        PROVOD[nick] = provod
+                        PROVOD[nick] = color_norm(provod)
                         time = random.randrange(15, 45)
                         msg(source[1], nick+u': вам вручена бомба, на ней '+str(len(provoda))+u' провода(ов): '+', '.join(provoda)+u' выберите цвет провода который нужно перерезать, на таймере '+str(time)+u' секунд')
                         try:
@@ -42,19 +52,25 @@ def bomb(type, source, args):
                 reply(type, source, u'ты дурак?')
 
 def bomb_start(conf, nick):
-        if nick in PROVOD and GROUPCHATS[conf][nick]['ishere']:
-                handler_kick(conf, nick, u'птыдыщь!')
-                del PROVOD[nick]
+        key = bomb_key_for(nick)
+        if key:
+                here = GROUPCHATS.get(conf, {}).get(key, {}).get('ishere')
+                if here:
+                        msg(conf, nick+u': ПТЫДЫЩЬ! Время вышло, вы не успели перерезать провод!')
+                        handler_kick(conf, key, u'время вышло! птыдыщь!')
+                del PROVOD[key]
 
 def bomb_msg(raw, type, source, body):
-        if source[2] in PROVOD:
-                answer = body.lower()
-                if answer == PROVOD[source[2]]:
+        key = bomb_key_for(source[2])
+        if key:
+                answer = color_norm(body)
+                if answer == PROVOD[key]:
                         reply(type, source, u'бомба обезврежена!')
-                        del PROVOD[source[2]]
+                        del PROVOD[key]
                 else:
-                        handler_kick(source[1], source[2], u'птыдыщь!')
-                        del PROVOD[source[2]]
+                        reply(type, source, u'птыдыщь! не тот провод, надо было перерезать: '+PROVOD[key])
+                        handler_kick(source[1], key, u'птыдыщь!')
+                        del PROVOD[key]
 
 register_message_handler(bomb_msg)
 command_handler(bomb, 10, "bomba")

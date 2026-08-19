@@ -14,7 +14,7 @@ def handler_zona(type, source, nick):
                                 if nick in GROUPCHATS[source[1]]:
                                         zonas = []
                                         zonas.extend(zona_work(source[1]))
-                                        zonas.extend(eval(read_file('static/zona.txt'))['zona'])
+                                        zonas.extend(load_file('static/zona.txt', {})['zona'])
                                         repl = random.choice(zonas)
                                         msg(source[1], u'/me '+repl % (nick))
                                 else:
@@ -67,7 +67,7 @@ def zona_work(conf, action = None, phrase = None):
         if check_file(conf, 'zona.txt'):
                 base = 'dynamic/'+conf+'/zona.txt'
                 try:
-                        zonadb = eval(read_file(base))
+                        zonadb = load_file(base, {})
                 except:
                         zonadb = {}
                 if action == 1:

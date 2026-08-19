@@ -140,7 +140,7 @@ def handler_aturn_control(type, source, body):
 
 def aturn_init(conf):
         if check_file(conf, 'aturn.txt', "'on'"):
-                state = eval(read_file('dynamic/'+conf+'/aturn.txt'))
+                state = load_file('dynamic/'+conf+'/aturn.txt', '')
         else:
                 state = 'on'
                 delivery(u'Внимание! Не удалось создать aturn.txt для "%s"!' % (conf))

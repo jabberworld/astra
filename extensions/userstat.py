@@ -117,7 +117,7 @@ def userstat_init(conf):
         USERSTAT[conf] = {'col': 0, 'jids': {}}
         if check_file(conf, 'userstat.txt'):
                 try:
-                        USERSTAT[conf]['jids'] = eval(read_file('dynamic/%s/userstat.txt' % (conf)))
+                        USERSTAT[conf]['jids'] = load_file('dynamic/%s/userstat.txt' % (conf), {})
                         for jid in USERSTAT[conf]['jids']:
                                 USERSTAT[conf]['jids'][jid]['ishere'] = False
                 except:

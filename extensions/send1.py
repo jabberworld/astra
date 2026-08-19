@@ -43,7 +43,7 @@ def handler_send_join1(conf, nick, afl, role):
 
 def get_send_cache1(conf):
         if check_file(conf, 'send1.txt'):
-                cache1 = eval(read_file('dynamic/'+conf+'/send1.txt'))
+                cache1 = load_file('dynamic/'+conf+'/send1.txt', {})
         else:
                 cache1 = {}
                 delivery(u'Внимание! Не удалось создать send1.txt для "%s"!' % (conf))

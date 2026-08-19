@@ -63,7 +63,7 @@ def handler_verification_control(type, source, body):
 
 def verification_init(conf):
         if check_file(conf, 'verification.txt', "'off'"):
-                state = eval(read_file('dynamic/'+conf+'/verification.txt'))
+                state = load_file('dynamic/'+conf+'/verification.txt', '')
         else:
                 state = 'off'
                 delivery(u'Внимание! Не удалось создать verification.txt для "%s"!' % (conf))

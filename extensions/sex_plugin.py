@@ -32,7 +32,7 @@ def handler_sex(type, source, parameters):
                         if parameters in GROUPCHATS[source[1]]:
                                 sexs=[]
                                 sexs.extend(poke_work(source[1]))
-                                sexs.extend(eval(read_file('static/sexs.txt'))['sex'])
+                                sexs.extend(load_file('static/sexs.txt', {})['sex'])
                                 rep = random.choice(sexs)
                                 msg(source[1],(u'/me '+rep) % (parameters))
                         else:
@@ -45,7 +45,7 @@ def handler_sex(type, source, parameters):
 def poke_work(gch,action=None,phrase=None):
         DBPATH='dynamic/'+gch+'/sexs.txt'
         if check_file(gch,'sexs.txt'):
-                pokedb = eval(read_file(DBPATH))
+                pokedb = load_file(DBPATH, {})
                 if action==1:
                         for x in range(1, 21):
                                 if str(x) in pokedb.keys():

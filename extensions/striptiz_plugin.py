@@ -36,7 +36,7 @@ def handler_striptiz(type, source, parameters):
                         if parameters in GROUPCHATS[source[1]]:
                                 striptize=[]
                                 striptize.extend(poke_work(source[1]))
-                                striptize.extend(eval(read_file('static/striptize.txt'))['striptizes'])
+                                striptize.extend(load_file('static/striptize.txt', {})['striptizes'])
                                 rep = random.choice(striptize)
                                 if source[1] not in POL_SEX.keys():
                                           msg(source[1],u'/me '+rep % parameters)
@@ -53,7 +53,7 @@ def handler_striptiz(type, source, parameters):
 def poke_work5(gch,action=None,phrase=None):
         DBPATH='dynamic/'+gch+'/striptize.txt'
         if check_file(gch,'striptize.txt'):
-                pokedb = eval(read_file(DBPATH))
+                pokedb = load_file(DBPATH, {})
                 if action==1:
                         for x in range(1, 21):
                                 if str(x) in pokedb.keys():

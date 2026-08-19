@@ -55,7 +55,7 @@ def atjoin_greetz(conf, nick, afl, role):
 
 def greetz_init(conf):
         if check_file(conf, 'greetz.txt'):
-                list = eval(read_file('dynamic/'+conf+'/greetz.txt'))
+                list = load_file('dynamic/'+conf+'/greetz.txt', {})
         else:
                 list = {}
                 delivery(u'Внимание! Не удалось создать greetz.txt для "%s"!' % (conf))

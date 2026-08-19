@@ -37,8 +37,8 @@ def handler_kiss_kaf(type, source, parameters):
                                 kafeta=[]
                                 kafeta1=[]
                                 kafeta.extend(poke_work(source[1]))
-                                kafeta.extend(eval(read_file('static/kafeta.txt'))['kaf'])
-                                kafeta1.extend(eval(read_file('static/kafeta.txt'))['kaf1'])
+                                kafeta.extend(load_file('static/kafeta.txt', {})['kaf'])
+                                kafeta1.extend(load_file('static/kafeta.txt', {})['kaf1'])
                                 rep = random.choice(kafeta)
                                 rep1 = random.choice(kafeta1)
                                 if source[1] not in POL_SEX.keys():
@@ -56,7 +56,7 @@ def handler_kiss_kaf(type, source, parameters):
 def poke_work_kaf(gch,action=None,phrase=None):
         DBPATH='dynamic/'+gch+'/kafeta.txt'
         if check_file(gch,'kafeta.txt'):
-                pokedb = eval(read_file(DBPATH))
+                pokedb = load_file(DBPATH, {})
                 if action==1:
                         for x in range(1, 21):
                                 if str(x) in pokedb.keys():

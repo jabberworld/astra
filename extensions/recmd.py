@@ -114,7 +114,7 @@ def handler_reinit_command(type, source, body):
                 reply(type, source, repl)
 
 def reinit_record_handler(cmd, cmd_mass = None):
-        REINIT_LIST = eval(read_file(REINIT_FILE))
+        REINIT_LIST = load_file(REINIT_FILE, {})
         if cmd_mass:
                 REINIT_LIST[cmd] = cmd_mass
         else:
@@ -123,7 +123,7 @@ def reinit_record_handler(cmd, cmd_mass = None):
 
 def reinit_commands():
         if initialize_file(REINIT_FILE):
-                REINIT_LIST = eval(read_file(REINIT_FILE))
+                REINIT_LIST = load_file(REINIT_FILE, {})
                 for command in REINIT_LIST:
                         if command in COMMANDS:
                                 RECMDS['access'][command] = COMMANDS[command]['access']

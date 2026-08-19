@@ -54,7 +54,7 @@ def alarmWork(chat, nick, afl, role):
 
 def alarmInit():
         if initialize_file(ALARM_FILE):
-                globals()["ALARM_LIST"] = eval(read_file(ALARM_FILE))
+                globals()["ALARM_LIST"] = load_file(ALARM_FILE, {})
         else:
                 Print('\n\nError: can`t create alarm.txt!', color2)
 

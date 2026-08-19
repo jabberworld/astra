@@ -37,7 +37,7 @@ def BossToModer_cfg(mType, source, args):
 
 def BossToModer_init(conf):
         if check_file(None, 'btm.txt', "[]"):
-                chats = eval(read_file('dynamic/btm.txt'))
+                chats = load_file('dynamic/btm.txt', [])
         else:
                 chats = []
         globals()["BossToModer_exc"] = chats

@@ -51,14 +51,14 @@ def change_status_work(conf, message, status):
 
 def load_conf_status(conf):
         if check_file(conf, 'status.txt', str(DEF_STATUS)):
-                STATUS[conf] = eval(read_file('dynamic/%s/status.txt' % (conf)))
+                STATUS[conf] = load_file('dynamic/%s/status.txt' % (conf), {})
         else:
                 delivery(u'Внимание! Не удалось создать status.txt для "%s"!' % (conf))
 
 def roster_status_set(show_x = None, status_x = None):
         if None in [show_x, status_x]:
                 if initialize_file(ROSTER_STATUS_FILE, str(DEF_STATUS)):
-                        RST_STATUS = eval(read_file(ROSTER_STATUS_FILE))
+                        RST_STATUS = load_file(ROSTER_STATUS_FILE, {})
                         Presence = xmpp.Presence(show = RST_STATUS['status'], status = RST_STATUS['message'])
                 else:
                         Presence = xmpp.Presence(show = DEF_STATUS['status'], status = DEF_STATUS['message'])

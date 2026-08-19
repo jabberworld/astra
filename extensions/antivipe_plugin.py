@@ -234,7 +234,7 @@ def antivipe_ban_serv(type,source,parameters):
 def hnd_avipe_ban(groupchat):
         fl='dynamic/spamserv.txt'
         if os.path.exists(fl):
-                txt=eval(read_file(fl))
+                txt=load_file(fl, [])
                 for x in txt:
                         order_ban_v(groupchat, x)
 
@@ -246,7 +246,7 @@ def avipe_spam_add(type, source, parameters):
                 return
         fl='dynamic/spamserv.txt'
         if os.path.exists(fl):
-                txt=eval(read_file(fl))
+                txt=load_file(fl, [])
                 if parameters.lower() in txt:
                         reply(type, source, u'this server in not new, and hi use now')
                         return
