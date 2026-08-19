@@ -1,0 +1,11 @@
+{
+u"handler_puk": {
+u"syntax": u'''пук <ник>''',
+
+u"cmd": u'''пук''',
+
+u"examples": [u'''пук qwerty'''],
+
+u"desc": u'''Сила звука пука'''
+}
+}

@@ -1,0 +1,1 @@
+{u'SERV': [u'21region.org', u'braxis.org', u'jabber.zp.ua',u'finenet.ru', u'headcounter.org', u'jabbernet.dk', u'interkar.pl', u'jabber.ozerki.net', u'im.apinc.org', u'jabber.tcweb.org', u'jabber.syktsu.ru', u'neko.im', u'hartois.info', u'ims.kelkoo.net', u'jabber.kirovnet.ru', u'boese-ban.de'], u'NICK': [], u'MSG': [u'1111111', u'\u0437\u0435']}

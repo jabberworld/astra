@@ -1,0 +1,225 @@
+#===istalismanplugin===
+# /* coding: utf8 */
+# BlackSmith Bot Plugin
+# © simpleApps Unofficial.
+
+
+
+Langs = {'en': u'Английский',
+			'az': u'Азербайджанский', 
+			'am': u'Амхарский',
+			'hy': u'Армянский',
+			'ja': u'Японский', 
+			'ru': u'Русский', 
+			'auto': u'Авто', 
+			'sq': u'Албанский', 
+			'ar': u'Арабский', 
+			'af': u'Африкаанс', 
+			'eu': u'Баскский',
+			'be': u'Белорусский', 
+			'bn': u'Бенгальский', 
+			'my': u'Бирманский',
+			'bg': u'Болгарский', 
+			'bs': u'Боснийский',
+			'cy': u'Валлийский', 
+			'hu': u'Венгерский', 
+			'vi': u'Вьетнамский',
+			'haw': u'Гавайский',
+			'gl': u'Галисийский', 
+			'nl': u'Голландский', 
+			'el': u'Греческий',
+			'ka': u'Грузинский',
+			'gu': u'Гуджарати',
+			'da': u'Датский', 
+			'zu': u'Зулу',
+			'iw': u'Иврит', 
+			'ig': u'Игбо',
+			'yi': u'Идиш', 
+			'id': u'Индонезийский', 
+			'ga': u'Ирландский', 
+			'is': u'Исландский', 
+			'es': u'Испанский', 
+			'it': u'Итальянский', 
+			'yo': u'Йоруба',
+			'kk': u'Казахский',
+			'kn': u'Каннада',
+			'ca': u'Каталанский', 
+			'zh-CN': u'Китайский', 
+			'ko': u'Корейский', 
+			'lv': u'Латышский', 
+			'lt': u'Литовский', 
+			'mk': u'Македонский', 
+			'ms': u'Малайский', 
+			'mt': u'мальтийский', 
+			'de': u'Немецкий', 
+			'no': u'Норвежский', 
+			'fa': u'Персидский', 
+			'pl': u'Польский', 
+			'pt': u'Португальский', 
+			'ro': u'Румынский', 
+		 	'sr': u'Сербский', 
+		 	'sk': u'Словацкий', 
+		 	'sl': u'Словенский',
+		 	'sw': u'Суахили', 
+		 	'tl': u'Тагальский', 
+			'tt': u'Татарский', 
+		 	'th': u'Тайский', 
+		 	'tr': u'Турецкий', 
+		 	'uk': u'Украинский', 
+		 	'fi': u'Финский', 
+		 	'fr': u'Французский', 
+		 	'hi': u'Хинди', 
+		 	'hr': u'Хорватский', 
+		 	'cs': u'Чешский', 
+		 	'sv': u'Шведский', 
+		 	'et': u'Эстонский'}
+
+from re import search
+from urllib2 import quote, urlopen
+
+uagent = "Opera/9.60 (J2ME/MIDP; Opera Mini/4.2.13337/724; U; ru)"
+
+def uHTML(text):
+	from HTMLParser import HTMLParser 
+	text = text.replace("<br>", "\n").replace("</br>", "\n").replace("<br />", "\n")
+	text = HTMLParser().unescape(text)
+	del HTMLParser
+	return text
+
+def read_url(link, Browser = False):
+	from urllib2 import Request
+	req = Request(link)
+	if Browser:
+		req.add_header('User-agent', Browser)
+	site = urlopen(req)
+	data = site.read()
+	del Request
+	return data
+
+def parse(code):
+	match = search('class="t0">', code)
+	end = code[match.end():]
+	return end[:search("</div>", end).start()]
+
+def gTrans(fLang, tLang, text):
+	url = "http://translate.google.ru/m?hl=ru&sl=%(fLang)s&tl=%(tLang)s&ie=UTF-8&prev=_m&q=%(text)s"
+	text = quote(text.encode('utf-8'))
+	x = url % vars()
+	try:
+		time.sleep(0.2)
+		return uHTML(parse(read_url(x, uagent)))
+	except Exception, e:
+		return "%s: %s" % (e.__class__.__name__, e.message)
+
+def gAutoTrans(mType, source, text):
+	if text:
+		repl = gTrans("auto", "ru", text).decode("utf-8")
+		if text == repl:
+			repl = u"%s" % (gTrans("auto", "en", text).decode("utf-8"))
+		else:
+			repl = u"%s" % (repl)
+	else:
+		repl = u"Недостаточно параметров."
+	msg(source[1], repl)
+
+def gTransHandler(mType, source, args):
+	if args and len(args.split()) > 2:
+		(fLang, tLang, text) = args.split(None, 2)
+		reply(mType, source, u"Перевод %s => %s:\n%s" % (fLang, tLang, gTrans(fLang, tLang, text).decode("utf-8")))
+	else:
+		answer = u"\nДоступные языки:\n"
+		for a, b in enumerate(sorted([x + u" - " + y for x, y in Langs.iteritems()])):
+			answer += u"%s. " % b
+		reply(mType, source, answer.encode("utf-8"))
+
+def func_rebody3(repl, list):
+	for x in list:
+		repl = repl.replace(x, '')
+	return repl.strip()
+
+def gAutoTrans1(mType, source, text):
+	if text:
+		for nick in GROUPCHATS[source[1]].keys():
+			nick1 = nick
+		repl = gTrans("auto", "ru", text).decode("utf-8")
+		if text == repl:
+			repl = u"%s" % (gTrans("auto", "en", text).decode("utf-8"))
+		else:
+			repl = u"%s" % (repl)
+	else:
+		repl = u"Недостаточно параметров."
+	msg(source[1], repl)
+
+ATRANS = {}
+
+def handler_atrans(raw, mType, source, body):
+	if mType == 'public' and source[2] != '':
+		if ATRANS[source[1]] != 'off':
+			list = {}
+			for nick in GROUPCHATS[source[1]].keys():
+#			 	nick1 = nick
+				if GROUPCHATS[source[1]][nick]['ishere']:
+					for key in [nick+key for key in [':',',','>']]:
+						if body.count(key):
+							col = '*%s*' % str(len(list.keys()) + 1)
+							list[col] = key
+							body = body.replace(key, '')
+				if body.count(nick):
+					col2 = '*%s*' % str(len(list.keys()) + 1)
+					list[col2] = nick
+					body = body.replace(nick, 'col2')
+			rebody3 = func_rebody3(body, list.keys())
+#			for x in list:
+#		 	 	body = body.replace(x, list[x])
+	 		text = body
+	 		repl = gTrans("auto", "ru", text).decode("utf-8")
+			#gAutoTrans1(mType, source, text)
+#			repl = func_rebody3(repl, list.keys())
+			for x in list:
+		 	 	repl = repl.replace(x, list[x])
+			if text == repl:
+	 	 		repl = u"%s" % (gTrans("auto", "en", text).decode("utf-8"))
+	 	 	else:
+	 	 		repl = u"%s" % (repl)
+	 	 	msg(source[1],repl)
+
+def handler_atrans_control(type, source, body):
+	if source[1] in GROUPCHATS:
+		if body:
+			body = body.lower()
+			filename = 'dynamic/'+source[1]+'/atrans.txt'
+			if body in [u'вкл', 'on', '1']:
+				ATRANS[source[1]] = 'on'
+				write_file(filename, "'on'")
+				reply(type, source, u'авто-автоперевод включен')
+			elif body in [u'выкл', 'off', '0']:
+				ATRANS[source[1]] = 'off'
+				write_file(filename, "'off'")
+				reply(type, source, u'авто-перевод выключен')
+			else:
+				reply(type, source, u'читай помощь по команде')
+		else:
+			if ATRANS[source[1]] == 'off':
+				reply(type, source, u'сейчас авто-перевод выключен')
+			else:
+				reply(type, source, u'сейчас авто-перевод включен')
+	else:
+		reply(type, source, u'только в чате мудак!')
+
+def atrans_init(conf):
+	if check_file(conf, 'atrans.txt', "'off'"):
+		state = eval(read_file('dynamic/'+conf+'/atrans.txt'))
+	else:
+		state = 'on'
+		delivery(u'Внимание! Не удалось создать atrans.txt для "%s"!' % (conf))
+	ATRANS[conf] = state
+
+register_message_handler(handler_atrans)
+register_command_handler(handler_atrans_control, 'аперевод', ['все','разное'], 20, 'Включение/выключение авто-перевода, без параметра покажет текущее состояние.', 'аперевод [вкл/on/1/выкл/off/0]', ['аперевод вкл','аперевод выкл'])
+
+register_stage1_init(atrans_init)
+
+
+register_command_handler(gTransHandler, 'перевод', ['инфо','все'], 10, 'Переводчик.\nПеревод с одного языка на другой. Используется Google Translate.', 'перевод <исходный_язык> <нужный_язык> <текст>', ['перевод en ru hello world', 'перевод ru en привет, мир'])
+register_command_handler(gAutoTrans, '!', ['инфо','все'], 10, 'Перевод с одного языка на другой с автоопределением. Используется Google Translate.', '! <текст>', ['! hello', '! привет'])
+register_command_handler(gAutoTrans, 'переведи', ['инфо','все'], 10, 'Перевод с одного языка на другой с автоопределением. Используется Google Translate.', 'переведи <текст>', ['переведи hello', 'переведи привет'])
