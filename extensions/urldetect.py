@@ -5,24 +5,10 @@
 # Web site header detector
 
 # BETA! 
-import re, urllib.request as urllib
+import re
+import requests
 
-def contentTypeParser(opener, data):
-        ContentType = opener.headers.get("Content-Type")
-        Type, Charset = ContentType, None
-        try:
-                if ContentType.count(";"):
-                        Type, Charset = re.findall("(.*);[ ]?charset=(.*)", ContentType)[0]
-                        Charset = Charset.lower()
-                        if Charset == "unicode": Charset = "utf-8"
-                if not (Charset and Type == "text/html") or opener.url.endswith((".html", ".htm")):
-                        Charset = re.findall("/?charset=[\"|']?(.+?)['|\"|\>|\/]/?", data)[0]
-        except:
-                msg(source[1],u'не могу посмотреть инфу о ссылке. :(')
-                Charset = "utf-8"
-        return (Type, Charset) 
-                
-        
+
 def urlWatcher(raw, mType, source, body):
         if mType == "public" and (source[1] in urlDetect) and has_access(source[0], 11, source[1]):
                 if len(body) < 500:
@@ -30,22 +16,29 @@ def urlWatcher(raw, mType, source, body):
                                 url = re.findall(r'(http[s]?://.*)', body)
                                 if url:
                                         url = url[0].split()[0].strip(".,\\)\"")
-                                        if not chkUnicode(url): url = "http://" + IDNA(url)
-                                        opener = urllib.urlopen(url)
-                                        headers  = opener.headers
-                                        if "text/html" in headers.get("Content-Type") or url.endswith(".html"):
-                                                data = opener.read(2048576)
-                                                Type, Charset = contentTypeParser(opener, data)
-                                                title = getTag("title", data)
-                                                title = title.decode(Charset)
+                                        if not chkUnicode(url):
+                                                url = "http://" + IDNA(url)
+                                        proxies = {'http': WEATHER_PROXY, 'https': WEATHER_PROXY} if WEATHER_PROXY else None
+                                        opener = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
+                                                              proxies=proxies, timeout=WEATHER_TIMEOUT, stream=True)
+                                        ContentType = opener.headers.get("Content-Type") or ""
+                                        if "text/html" in ContentType or url.rstrip("/").endswith((".html", ".htm")):
+                                                data = b''
+                                                for chunk in opener.iter_content(65536):
+                                                        data += chunk
+                                                        if len(data) >= 2048576:
+                                                                break
+                                                data = decode_page(data)
+                                                title = getTagData("title", data)
                                                 answer = u"Заголовок: %s" % uHTML(title).replace("\n", "")
                                         else:
-                                                Type = headers.get("Content-Type") or ""
-                                                Size = byteFormat(int(headers.get("Content-Length") or 0))
-                                                Date = headers.get("Last-Modified") or ""
+                                                Type = ContentType
+                                                Size = byteFormat(int(opener.headers.get("Content-Length") or 0))
+                                                Date = opener.headers.get("Last-Modified") or ""
                                                 answer = u"Тип: %s, размер: %s; последнее изменение файла: %s." % (Type, Size, Date)
+                                        opener.close()
                                         msg(source[1], answer)
-                        except: 
+                        except Exception:
                             msg(source[1],u'не могу посмотреть инфу о ссылке. :(')
 
 def urlWatcherConfig(mType, source, args):

@@ -16,12 +16,8 @@ def hnd_fun_k(type,source,parameters):
                 return
         NO=[u'дала па галаве веником',u'нехватило',u'не насыпала',u'плюнула в миску']
         if source[1] in GROUPCHATS:
-                n=0
-                for x in GROUPCHATS[source[1]]:
-                        if GROUPCHATS[source[1]][x]['ishere']==1:
-                                n+=1
-                                ALL.append(x)
-                if n<3:
+                ALL = present_nicks(source[1])
+                if len(ALL) < 3:
                         reply(type,source,u'зови народ,тогда и зохаваем!')
                         return
                 no=random.choice(ALL)

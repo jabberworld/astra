@@ -3,12 +3,16 @@
 
 # by Evgеn (xmpp:allertvitter@conference.qip.ru)
 
-import re, urllib.request as urllib
+import re
+import requests
 
 def open_gotovim(type,source,parameters):
         try:
-                data = urllib.urlopen("http://www.gotovim.ru/recepts/random.shtml").read()
-                data=unicode(data,'windows-1251')
+                proxies = {'http': WEATHER_PROXY, 'https': WEATHER_PROXY} if WEATHER_PROXY else None
+                req = requests.get("http://www.gotovim.ru/recepts/random.shtml",
+                                   headers={'User-Agent': UserAgents['Firefox']},
+                                   proxies=proxies, timeout=WEATHER_TIMEOUT)
+                data = req.content.decode('cp1251', 'replace')
                 if data.count('<h1>')>=1:
                         od = re.search('<h1>',data)
                         h2 = data[od.end():]

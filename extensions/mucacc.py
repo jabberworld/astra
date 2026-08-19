@@ -91,13 +91,10 @@ COLBAN = {}
 def command_kick(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         jid = handler_jid('%s/%s' % (source[1], nick))
                         if jid not in ADLIST:
-                                if len(args) >= 2:
-                                        reason = body[(body.find(' ') + 1):].strip()
-                                else:
+                                if not reason:
                                         reason = source[2]
                                 handler_kick2(mType, source, source[1], nick, reason)
                         else:
@@ -122,13 +119,10 @@ def save_colban():
 def command_visitor(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         jid = handler_jid('%s/%s' % (source[1], nick))
                         if jid not in ADLIST:
-                                if len(args) >= 2:
-                                        reason = body[(body.find(' ') + 1):].strip()
-                                else:
+                                if not reason:
                                         reason = source[2]
                                 handler_visitor2(mType, source, source[1], nick, reason)
                         else:
@@ -141,12 +135,10 @@ def command_visitor(mType, source, body):
 def command_participant(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        if len(args) >= 2:
-                                reason = body[(body.find(' ') + 1):].strip()
-                        else:
+                        nick, reason = resolve_nick(source[1], body)
+                        if not reason:
                                 reason = source[2]
-                        handler_participant2(mType, source, source[1], args[0].strip(), reason)
+                        handler_participant2(mType, source, source[1], nick, reason)
                 else:
                         reply(mType, source, u'кого?')
         else:
@@ -155,12 +147,10 @@ def command_participant(mType, source, body):
 def command_moder(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        if len(args) >= 2:
-                                reason = body[(body.find(' ') + 1):].strip()
-                        else:
+                        nick, reason = resolve_nick(source[1], body)
+                        if not reason:
                                 reason = source[2]
-                        handler_moder2(mType, source, source[1], args[0].strip(), reason)
+                        handler_moder2(mType, source, source[1], nick, reason)
                 else:
                         reply(mType, source, u'кого выделывать то?')
         else:
@@ -169,16 +159,13 @@ def command_moder(mType, source, body):
 def command_member(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         if nick.count('.') or nick in GROUPCHATS[source[1]]:
                                 if nick in GROUPCHATS[source[1]]:
                                         jid = handler_jid('%s/%s' % (source[1], nick))
                                 else:
                                         jid = nick
-                                if len(args) >= 2:
-                                        reason = body[(body.find(' ') + 1):].strip()
-                                else:
+                                if not reason:
                                         reason = source[2]
                                 handler_member2(mType, source, source[1], jid, nick, reason)
                         else:
@@ -191,16 +178,13 @@ def command_member(mType, source, body):
 def command_admin(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         if nick.count('.') or nick in GROUPCHATS[source[1]]:
                                 if nick in GROUPCHATS[source[1]]:
                                         jid = handler_jid('%s/%s' % (source[1], nick))
                                 else:
                                         jid = nick
-                                if len(args) >= 2:
-                                        reason = body[(body.find(' ') + 1):].strip()
-                                else:
+                                if not reason:
                                         reason = source[2]
                                 handler_admin2(mType, source, source[1], jid, nick, reason)
                         else:
@@ -213,16 +197,13 @@ def command_admin(mType, source, body):
 def command_owner(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         if nick.count('.') or nick in GROUPCHATS[source[1]]:
                                 if nick in GROUPCHATS[source[1]]:
                                         jid = handler_jid('%s/%s' % (source[1], nick))
                                 else:
                                         jid = nick
-                                if len(args) >= 2:
-                                        reason = body[(body.find(' ') + 1):].strip()
-                                else:
+                                if not reason:
                                         reason = source[2]
                                 handler_owner2(mType, source, source[1], jid, nick, reason)
                         else:
@@ -236,17 +217,14 @@ def command_owner(mType, source, body):
 def command_ban(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         if nick.count('.') or nick in GROUPCHATS[source[1]]:
                                 if nick in GROUPCHATS[source[1]]:
                                         jid = handler_jid('%s/%s' % (source[1], nick))
                                 else:
                                         jid = nick
                                 if jid not in ADLIST:
-                                        if len(args) >= 2:
-                                                reason = body[(body.find(' ') + 1):].strip()
-                                        else:
+                                        if not reason:
                                                 reason = source[2]
                                         handler_ban2(mType, source, source[1], jid, nick, reason)
                                 else:
@@ -261,16 +239,13 @@ def command_ban(mType, source, body):
 def command_none(mType, source, body):
         if source[1] in GROUPCHATS:
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         if nick.count('.') or nick in GROUPCHATS[source[1]]:
                                 if nick in GROUPCHATS[source[1]]:
                                         jid = handler_jid('%s/%s' % (source[1], nick))
                                 else:
                                         jid = nick
-                                if len(args) >= 2:
-                                        reason = body[(body.find(' ') + 1):].strip()
-                                else:
+                                if not reason:
                                         reason = source[2]
                                 handler_none2(mType, source, source[1], jid, nick, reason)
                         else:
@@ -282,16 +257,13 @@ def command_none(mType, source, body):
 
 def command_fullban(mType, source, body):
                 if body:
-                        args = body.split()
-                        nick = args[0].strip()
+                        nick, reason = resolve_nick(source[1], body)
                         if nick.count('.') or nick in GROUPCHATS[source[1]]:
                                 if nick in GROUPCHATS[source[1]]:
                                         jid = handler_jid('%s/%s' % (source[1], nick))
                                 else:
                                         jid = nick
-                                if len(args) > 1:
-                                        reason = body[(body.find(' ') + 1):].strip()
-                                else:
+                                if not reason:
                                         reason = source[2]
                                 if BanBase.get(jid):
                                         reply(mType, source, u"Этот пользователь уже глобально забанен.")

@@ -10,11 +10,8 @@ def handler_sexall(type, source, parameters):
         if not source[1] in GROUPCHATS.keys():
             reply(type, source, u'only to chatrooms!')
             return
-        SP=[]
-        for x in GROUPCHATS[source[1]]:
-            if GROUPCHATS[source[1]][x]['ishere']:
-                SP.append(x)
-        if not len(SP)>2:
+        SP = present_nicks(source[1])
+        if len(SP) < 3:
             reply(type, source, u'мы тут в двоем походу!')
             return
         txt=read_file('static/sexs.txt')

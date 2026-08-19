@@ -58,18 +58,21 @@ def bashOrg(type, source, body):
 
 
 def itHappens(mType, source, body):
-        if body and body.isdigit():
-                url = "http://ithappens.me/story/%s" % body
-        else:
-                url = "http://ithappens.me/random"
-        data = read_url(url, UserAgents["OperaMini"])
-        data = re.search("<div class='text'>.*?</div>", data, 16)
-        if data:
-                data = data.group()
-                data = stripTags(uHTML(data), " ")
-        else:
-                data = u'Ошибка.'
-        reply(mType, source, data)
+        try:
+                if body and body.isdigit():
+                        url = "http://ithappens.me/story/%s" % body
+                else:
+                        url = "http://ithappens.me/random"
+                data = read_url(url, UserAgents["OperaMini"])
+                data = re.search("<div class='text'>.*?</div>", data, 16)
+                if data:
+                        data = data.group()
+                        data = stripTags(uHTML(data), " ")
+                else:
+                        data = u'Ошибка.'
+                reply(mType, source, data)
+        except Exception:
+                reply(mType, source, returnExc())
 
 
 ## by Snapi-Snup autor

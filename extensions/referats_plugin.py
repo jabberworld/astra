@@ -1,380 +1,72 @@
 #===istalismanplugin===
 # -*- coding: utf-8 -*-
-import urllib.request as urllib2
+import re
+import requests
 
 # автор - ferym@jabbim.org.ru
 # по вопросам обращаться в support@conference.veganet.org.ru
 # web site: http://veganet.org
 # plugin version 1.0
 
+REFERAT_URLS = {
+        u'астрономия': 'http://referats.yandex.ru/astronomy.xml',
+        u'геология': 'http://referats.yandex.ru/geology.xml',
+        u'гироскопия': 'http://referats.yandex.ru/gyroscope.xml',
+        u'литература': 'http://referats.yandex.ru/literature.xml',
+        u'маркетинг': 'http://referats.yandex.ru/marketing.xml',
+        u'математика': 'http://referats.yandex.ru/mathematics.xml',
+        u'музыка': 'http://referats.yandex.ru/music.xml',
+        u'политология': 'http://referats.yandex.ru/polit.xml',
+        u'почвоведение': 'http://referats.yandex.ru/agrobiologia.xml',
+        u'правоведение': 'http://referats.yandex.ru/law.xml',
+        u'психология': 'http://referats.yandex.ru/psychology.xml',
+        u'география': 'http://referats.yandex.ru/geography.xml',
+        u'физика': 'http://referats.yandex.ru/physics.xml',
+        u'философия': 'http://referats.yandex.ru/philosophy.xml',
+        u'химия': 'http://referats.yandex.ru/chemistry.xml',
+        u'эстетика': 'http://referats.yandex.ru/estetica.xml',
+}
+
+def decode_referat(text):
+        return stripTags(text.replace('<br />', '\n').replace('<br>', '\n')
+                        .replace('</h1>', '\n\n').replace('<p>', '').replace('</p>', ''))
+
 def handler_refer(type, source, parameters):
-    if not parameters:
-      reply(type, source, u'выберите категорию реферата!\nподробнее "помощь реферат"')
-      return
-    elif parameters==u'астрономия':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/astronomy.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-      
-    elif parameters==u'геология':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/geology.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-      
-    elif parameters==u'гироскопия':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/gyroscope.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-      
-    elif parameters==u'литература':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/literature.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'маркетинг':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/marketing.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'математика':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/mathematics.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'музыка':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/music.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'политология':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/polit.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'почвоведение':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/agrobiologia.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'правоведение':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/law.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'психология':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/psychology.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'география':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/geography.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'физика':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/physics.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'философия':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/philosophy.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'химия':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/chemistry.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-              
-    elif parameters==u'эстетика':
-      try:
-          if parameters.strip() != '':
-              reply(type, source, eval(parameters.strip()))
-          else:
-              r = urllib2.urlopen(req)
-      except:
-          req = urllib2.Request('http://referats.yandex.ru/estetica.xml')
-          req.add_header = ('User-agent', 'Mozilla/5.0')
-          r = urllib2.urlopen(req)
-          target = r.read()
-          od = re.search('<h1 style="color:black; margin-left:0;">',target)
-          message = target[od.end():]
-          message = message[:re.search('</div></td>',message).start()]
-          message = '\n' + message.strip()
-          message = decode(message)
-          if type=='private':
-            reply(type, source, unicode(message,'windows-1251'))
-          else:
-            reply(type, source, u'ушло в приват')
-            reply('private', source, unicode(message,'windows-1251'))
-            return
-    
-    elif parameters==u'категории':
-      categ = [u'астрономия',u'геология',u'гироскопия',u'литература',u'маркетинг',u'математика',u'музыка',u'политология',u'почвоведение',u'правоведение',u'психология',u'география',u'физика',u'философия',u'химия',u'эстетика']
-      repl = u'Доступны рефераты по следующим категориям:\n'+',\n'.join(categ)+u'\nВсего ('+str(len(categ))+u') категорий.\nЧто бы сгенерировать реферат по определённой категории, выполните команду "реферат <категория>\nby ferym"'
-      reply(type, source, repl)
-            
-            
-    else:
-      reply(type, source, u'Не существующая категория!\nподробнее "помощь реферат"')
-      return           
-                  
-def decode(text):
-    return strip_tags.sub('', text.replace('<br />','\n').replace('<br>','\n').replace('<\h1>','\n \n').replace('<p>','').replace('<\p>',''))
+        if not parameters:
+                reply(type, source, u'выберите категорию реферата!\nподробнее "помощь реферат"')
+                return
+        if parameters == u'категории':
+                categ = sorted(REFERAT_URLS.keys())
+                repl = (u'Доступны рефераты по следующим категориям:\n' + u',\n'.join(categ)
+                        + u'\nВсего (' + str(len(categ)) + u') категорий.\n'
+                        + u'Что бы сгенерировать реферат по определённой категории, '
+                        + u'выполните команду "реферат <категория>\nby ferym"')
+                reply(type, source, repl)
+                return
+        url = REFERAT_URLS.get(parameters.strip().lower())
+        if not url:
+                reply(type, source, u'Не существующая категория!\nподробнее "помощь реферат"')
+                return
+        try:
+                proxies = {'http': WEATHER_PROXY, 'https': WEATHER_PROXY} if WEATHER_PROXY else None
+                r = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
+                                 proxies=proxies, timeout=WEATHER_TIMEOUT)
+                target = r.content.decode('cp1251', 'replace')
+                od = re.search('<h1 style="color:black; margin-left:0;">', target)
+                if not od:
+                        reply(type, source, u'Возможно сменили разметку')
+                        return
+                message = target[od.end():]
+                stop = re.search('</div></td>', message)
+                if stop:
+                        message = message[:stop.start()]
+                message = '\n' + decode_referat(message).strip()
+                if type == 'private':
+                        reply(type, source, message)
+                else:
+                        reply(type, source, u'ушло в приват')
+                        reply('private', source, message)
+        except Exception:
+                reply(type, source, u'не могу получить реферат, сервис недоступен')
 
 register_command_handler(handler_refer, 'реферат', ['mod','все'], 10,'Генерация рефератов по выбранным вами темам.\nДля просмотра доступных категорий выполните команду "реферат категории"','реферат <категория>', ['реферат философия','реферат категории\nby ferym\nplugin version 1.0'])

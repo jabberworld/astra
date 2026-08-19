@@ -9,7 +9,7 @@ CapsVer = '%s.%s' % (BOT_VER, CORE_MODE)
 def botversion(t,s,p):
    VERSION_BOT = load_file(VER_FILENAME, {})
    if not p:
-      reply(t,s,u'Ботверсия: \nИмя: '+str(NONAME)+u'\nВерсия: '+str(BOT_VER)+u'\nРевизия: '+str(BOT_REV)+u' (r.'+str(CORE_MODE)+u')\nКлиент: '+str(os_name))
+      reply(t,s,u'Ботверсия: \nИмя: '+str(NONAME)+u'\nВерсия: '+str(BOT_VER)+u' (r.'+str(BOT_REV)+u')\nКлиент: '+str(os_name))
       return
    if p.count(u'&') < 4:
                    reply(t, s, u'чё за бред?!1 кури помощь по команде')

@@ -6,7 +6,8 @@
 from __future__ import with_statement
 from urllib.request import urlopen
 from traceback import format_exc, print_exc
-import gc, os, re, sys, time, random, threading
+import gc, os, re, sys, time, random, threading, platform
+import slixmpp
 
 ## Enable G.C.
 gc.enable()
@@ -139,9 +140,7 @@ wsmph, smph = threading.Semaphore(), threading.Semaphore(60)
 
 from sTools import *
 ## os info.
-os_name = "POSIX (%s, %s)" % (os.uname()[0], os.uname()[2])
-os_name = os_name.strip() + " " + getArchitecture()
-del getArchitecture
+os_name = "Python %s, slixmpp %s" % (platform.python_version(), slixmpp.__version__)
 
 from webtools import *
 UserAgents["BlackSmith"] = "BlackSmith XMPP-BOT mark.1 (%s; %d.%d; ru)" % (os_name, BOT_VER, CORE_MODE)
@@ -656,6 +655,22 @@ def handler_botnick(conf):
         if conf in BOT_NICKS:
                 return BOT_NICKS[conf]
         return DEFAULT_NICK
+
+def present_nicks(conf):
+        bot = handler_botnick(conf)
+        return [n for n, info in GROUPCHATS.get(conf, {}).items()
+                if n and n.strip() and n != bot and info.get('ishere')]
+
+def resolve_nick(conf, body):
+        if not body:
+                return '', ''
+        words = body.split()
+        nicks = GROUPCHATS.get(conf, {})
+        for i in range(len(words), 0, -1):
+                cand = ' '.join(words[:i])
+                if cand in nicks:
+                        return cand, ' '.join(words[i:])
+        return words[0], ' '.join(words[1:])
 
 def handler_jid(instance):
         instance = str(instance)
@@ -1283,7 +1298,7 @@ def IQ_PROCESSING(client, iq):
                 query = result.getTag("query")
                 if nsType == xmpp.NS_VERSION:
                         query.setTagData("name", "Astra")
-                        query.setTagData("version", "%d (r.%d)" % (CORE_MODE, BOT_REV))
+                        query.setTagData("version", "%d (r.%d)" % (BOT_VER, BOT_REV))
                         query.setTagData("os", os_name)
                 elif nsType == xmpp.NS_URN_TIME:
                         tzo = (lambda tup: tup[0]+"%02d:" % tup[1]+"%02d" % tup[2])((lambda t: tuple(['+' if t < 0 else '-', abs(t)/3600, abs(t)/60%60]))(time.altzone if time.daylight else time.timezone))
