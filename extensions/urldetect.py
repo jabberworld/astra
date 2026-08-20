@@ -18,9 +18,9 @@ def urlWatcher(raw, mType, source, body):
                                         url = url[0].split()[0].strip(".,\\)\"")
                                         if not chkUnicode(url):
                                                 url = "http://" + IDNA(url)
-                                        proxies = {'http': WEATHER_PROXY, 'https': WEATHER_PROXY} if WEATHER_PROXY else None
+                                        proxies = {'http': NETWORK_PROXY, 'https': NETWORK_PROXY} if NETWORK_PROXY else None
                                         opener = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
-                                                              proxies=proxies, timeout=WEATHER_TIMEOUT, stream=True)
+                                                              proxies=proxies, timeout=NETWORK_TIMEOUT, stream=True)
                                         ContentType = opener.headers.get("Content-Type") or ""
                                         if "text/html" in ContentType or url.rstrip("/").endswith((".html", ".htm")):
                                                 data = b''

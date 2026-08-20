@@ -72,7 +72,7 @@ def alias_exec_add_join(t, s, p):
             a = re.findall(x+'.*?#', p, re.DOTALL | re.IGNORECASE)[0]
             g = re.findall(x+'(.*?)#', p, re.DOTALL | re.IGNORECASE)[0]#p.split(x)[1]
             g = g.replace('{','\"""+random.choice([').replace('}','])+u\"""')
-            g = g.replace('</','\"""+').replace('\>','+u\"""')
+            g = g.replace('</','\"""+').replace(r'\>','+u\"""')
             
             m = ("""threading.Thread(None,COMMAND_HANDLERS[u'%s'],'command'+str(INFO['thr']),(t, s, u\"""%s\""",)).start();""") % (x, g.strip())
 
@@ -159,7 +159,7 @@ def alias_exec_add_msg(t, s, p):
             a = re.findall(x+'.*?#', p)[0]
             g = re.findall(x+'(.*?)#', p)[0]
             g = g.replace('{','\"""+random.choice([').replace('}','])+u\"""')
-            g = g.replace('</','\"""+').replace('\>','+u\"""')
+            g = g.replace('</','\"""+').replace(r'\>','+u\"""')
             
             m = """threading.Thread(None,COMMAND_HANDLERS[u'%s'],'command'+str(INFO['thr']),(t, s, u\"""%s\""",)).start(); """ % (x, g.strip())
             
@@ -347,7 +347,7 @@ def als_help(t, s, p):
     
             
 register_command_handler(als_help, 'alias_help', ['все'], 20, 'Помощь по алиасам', 'alias_help', ['alias_help'])        
-register_command_handler(alias_exec_add_msg, 'alias_msg', ['все'], 20, 'Добавление алиаса с использованием кода питон. Без параметров выводит список всех алиасов. Активируется при сообщении. см. также alias_help .Есть несколько переменных $nick-ник написавшего, $userjid-жид, $serv - сервер, $chat-конфа ,$p - текст который написал юзер, $p0 - первое слово до пробела, $p1 - второе слово до пробела.', 'alias_msg <условие> <вызов команды и параметры> # или alias_msg <номер алиаса> чтобы удалить алиас', ['alias_msg if p==u\'конец света\': сказать конец света через </str(random.randrange(10,99999))\> дней!#','alias_msg if len(p)>1000: кик $nick#','alias_msg if p.count(u\'привет\'): time.sleep(10); сказать $nick: {u\'здарова!\',u\'выручи на рубас?\'}#','alias_msg if nick.count(u\'вася\'): time.sleep(5); сказать привет, $nick!#','alias_msg if p==u\'Что такое пук?\': сказать $nick: Звук, издаваемый при выходе газов из кишечника. Громкий пук.#'])        
+register_command_handler(alias_exec_add_msg, 'alias_msg', ['все'], 20, 'Добавление алиаса с использованием кода питон. Без параметров выводит список всех алиасов. Активируется при сообщении. см. также alias_help .Есть несколько переменных $nick-ник написавшего, $userjid-жид, $serv - сервер, $chat-конфа ,$p - текст который написал юзер, $p0 - первое слово до пробела, $p1 - второе слово до пробела.', 'alias_msg <условие> <вызов команды и параметры> # или alias_msg <номер алиаса> чтобы удалить алиас', ['alias_msg if p==u\'конец света\': сказать конец света через </str(random.randrange(10,99999))\\> дней!#','alias_msg if len(p)>1000: кик $nick#','alias_msg if p.count(u\'привет\'): time.sleep(10); сказать $nick: {u\'здарова!\',u\'выручи на рубас?\'}#','alias_msg if nick.count(u\'вася\'): time.sleep(5); сказать привет, $nick!#','alias_msg if p==u\'Что такое пук?\': сказать $nick: Звук, издаваемый при выходе газов из кишечника. Громкий пук.#'])        
 register_command_handler(alias_exec_add_join, 'alias_join', ['все'], 20, 'Добавление алиаса с использованием кода питон. Без параметров выводит список всех алиасов. Активируется на презенс. см. также alias_help .Есть несколько переменных $nick-ник написавшего, $userjid-жид, $serv - сервер, $chat-конфа', 'alias_join <условие> <вызов команды и параметры> #', ['alias_join if len(nick)>19: бан $nick#','alias_join if nick.count(u\'вася\'): time.sleep(5); сказать {u\'привет\',u\'хобуна\'}#','alias_join if not serv in [\'jabber.ru\',\'talkonaut.com\']: бан $serv#'])        
 register_message_handler(alias_msg)
 register_join_handler(alias_join)

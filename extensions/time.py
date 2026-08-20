@@ -124,7 +124,7 @@ def gettime_xep0202_answer(coze, res, nick, type, source):
                                         utc = p.getTagData('utc')
                                 if tzo and utc:
                                         try:
-                                                [sign, tzh, tzm] = re.match('(\+|-)?([0-9]+):([0-9]+)', tzo).groups()
+                                                [sign, tzh, tzm] = re.match(r'(\+|-)?([0-9]+):([0-9]+)', tzo).groups()
                                                 [year, month, day, hours, minutes, seconds] = re.match('([0-9]+)-([0-9]+)-([0-9]+)T([0-9]+):([0-9]+):([0-9]+)', utc).groups()
                                         except:
                                                 reply(type, source, u'не парсится')

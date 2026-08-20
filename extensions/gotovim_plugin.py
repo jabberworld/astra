@@ -8,10 +8,10 @@ import requests
 
 def open_gotovim(type,source,parameters):
         try:
-                proxies = {'http': WEATHER_PROXY, 'https': WEATHER_PROXY} if WEATHER_PROXY else None
+                proxies = {'http': NETWORK_PROXY, 'https': NETWORK_PROXY} if NETWORK_PROXY else None
                 req = requests.get("http://www.gotovim.ru/recepts/random.shtml",
                                    headers={'User-Agent': UserAgents['Firefox']},
-                                   proxies=proxies, timeout=WEATHER_TIMEOUT)
+                                   proxies=proxies, timeout=NETWORK_TIMEOUT)
                 data = req.content.decode('cp1251', 'replace')
                 if data.count('<h1>')>=1:
                         od = re.search('<h1>',data)

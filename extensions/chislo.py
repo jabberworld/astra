@@ -17,7 +17,7 @@ def chislo789(type, source, parameters):
  if not jid in MONEY:
   MONEY[jid] = 100
   with file('dynamic/money.txt', 'w') as fp: fp.write(str(MONEY))
- e = u'я загадала число от 0 до 10, ставка 5$, попробуйте его отгадать у вас есть 3 попытки. Также это необходимо сделать за 3 минуты. Поехали!\nОбщий сщет: '+str(MONEY[jid])+'$'
+ e = u'я загадала число от 0 до 10, ставка 5$, попробуйте его отгадать у вас есть 3 попытки. Также это необходимо сделать за 3 минуты. Поехали!\nОбщий счет: '+str(MONEY[jid])+'$'
  k = random.randrange(0, 9999)
  hh = random.choice(chislo567)
  chislo2567[groupchat]={}
@@ -33,7 +33,7 @@ def chislo_start567(type, source, jid, k):
   if jid in chislo2567[groupchat] and nick in GROUPCHATS[groupchat] and chislo2567[groupchat][jid]['chislo2'] == k:
    reply(type,source,u'3 минуты истекли, игра закончена.')
    del chislo2567[groupchat]
-                
+
 def chislo_msg(raw,type,source,parameters):
  groupchat = source[1]
  nick=source[2]
@@ -54,7 +54,7 @@ def chislo_msg(raw,type,source,parameters):
   chislo2567[groupchat][jid]['chislo1']+=1
   if parameters == chislo2567[groupchat][jid]['chislo']:
    MONEY[jid] += 25
-   reply(type,source,u'поздравляю вы угадали число!\n Общий сщет: '+str(MONEY[jid])+'$' )
+   reply(type,source,u'поздравляю вы угадали число!\n Общий счет: '+str(MONEY[jid])+'$' )
    confa = source[1]
    if confa in TM.keys():
     TM[confa] += 50
@@ -67,7 +67,7 @@ def chislo_msg(raw,type,source,parameters):
     if chislo2567[groupchat][jid]['chislo1'] == 3:
      e = chislo2567[groupchat][jid]['chislo']
      MONEY[jid] -= 5
-     reply(type,source,u'вы проиграли, я загадала число '+unicode(e)+u'\nОбщий сщет: '+str(MONEY[jid])+'$' )
+     reply(type,source,u'вы проиграли, я загадала число '+unicode(e)+u'\nОбщий счет: '+str(MONEY[jid])+'$' )
      with file('dynamic/money.txt', 'w') as fp: fp.write(str(MONEY))
      del chislo2567[groupchat]
      return
@@ -78,7 +78,7 @@ def chislo_msg(raw,type,source,parameters):
      e = chislo2567[groupchat][jid]['chislo']
      MONEY[jid] -= 5
      with file('dynamic/money.txt', 'w') as fp: fp.write(str(MONEY))
-     reply(type,source,u'вы проиграли, я загадала число '+unicode(e)+u'\nОбщий сщет: '+str(MONEY[jid])+'$' )
+     reply(type,source,u'вы проиграли, я загадала число '+unicode(e)+u'\nОбщий счет: '+str(MONEY[jid])+'$' )
      del chislo2567[groupchat]
      return
     reply(type,source,u'истинное число больше вашего')

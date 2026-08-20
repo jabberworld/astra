@@ -10,13 +10,10 @@ def command_Chuck(mType, source, body):
                 Ask = "/random"
         try:
                 data = read_url("http://chucknorrisfacts.ru/%s" % Ask, UserAgents["BlackSmith"])
-        except Exception as exc:
-                answer = str(exc)
-        except:
+        except Exception:
                 answer = u"Не могу получить доступ к странице."
         else:
-                pass
-                comp = re.compile("<a href=/quote/(\d+?)>.+?<blockquote>(.+?)</blockquote>", 16)
+                comp = re.compile(r"<a href=/quote/(\d+?)>.+?<blockquote>(.+?)</blockquote>", 16)
                 data = comp.search(data)
                 if data:
                         answer = stripTags(uHTML(u"Факт #%s:\n%s" % data.groups()))

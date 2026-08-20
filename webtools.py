@@ -10,6 +10,13 @@ import re
 from urllib.request import Request, urlopen
 from html.entities import name2codepoint as htmlname2codepoint
 
+import requests
+
+try:
+	from config import NETWORK_PROXY, NETWORK_TIMEOUT
+except ImportError:
+	NETWORK_PROXY, NETWORK_TIMEOUT = None, 20
+
 UserAgents = {"OperaMini": "Opera/9.60 (J2ME/MIDP; Opera Mini/4.2.13337/724; U; ru)",  # Opera Mini 4.2 User-Agent
 			  "Firefox": "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:21.0) Gecko/20130309 Firefox/21.0"}
 
@@ -21,7 +28,7 @@ for Name, Numb in htmlname2codepoint.items():
 
 del Name, Numb
 
-compile_ehtmls = re.compile("&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));")
+compile_ehtmls = re.compile(r"&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));")
 
 def uHTML(data):
 	if data.count("&"):
@@ -59,18 +66,17 @@ def decode_page(data):
 	return data
 
 def read_link(link):
-	return decode_page(urlopen(link).read())
+	return read_url(link)
 
 def read_url(link, Browser = None):
-	req = Request(link)
-	if Browser:
-		req.add_header("User-agent", Browser)
-	site = urlopen(req)
-	data = site.read()
+	headers = {"User-Agent": Browser} if Browser else {}
+	proxies = {'http': NETWORK_PROXY, 'https': NETWORK_PROXY} if NETWORK_PROXY else None
+	data = requests.get(link, headers = headers, proxies = proxies,
+	                    timeout = NETWORK_TIMEOUT).content
 	return decode_page(data)
 
 ## Parsing.
-def re_search(body, s0, s2, s1 = "(?:.|\s)+"):
+def re_search(body, s0, s2, s1 = r"(?:.|\s)+"):
 	comp = re.compile("%s(%s?)%s" % (s0, s1, s2), 16)
 	body = comp.search(body)
 	if body:

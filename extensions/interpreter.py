@@ -43,7 +43,7 @@ def pyShell(mType, source, cmd):
 
 def pyCalc(mType, source, expression):
         if expression and len(expression) <= 24 and not expression.count("**"):
-                reg = re.sub("([0-9]|[\+\-\(\/\*\)\%\^\.])", "", expression)
+                reg = re.sub(r"([0-9]|[\+\-\(\/\*\)\%\^\.])", "", expression)
                 if reg:
                         result = "Недопустимо."
                 else:

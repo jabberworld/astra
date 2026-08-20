@@ -19,8 +19,8 @@ gis_days = {'0': 'сегодня', '1': 'завтра', '2': 'послезавт
 
 
 def weather_request(url, save_response=False):
-        proxies = {'http': WEATHER_PROXY, 'https': WEATHER_PROXY} if WEATHER_PROXY else None
-        response = requests.get(url, headers=weather_headers, proxies=proxies, timeout=WEATHER_TIMEOUT)
+        proxies = {'http': NETWORK_PROXY, 'https': NETWORK_PROXY} if NETWORK_PROXY else None
+        response = requests.get(url, headers=weather_headers, proxies=proxies, timeout=NETWORK_TIMEOUT)
         response.raise_for_status()
         data = response.text
         if save_response:

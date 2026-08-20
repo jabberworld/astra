@@ -63,7 +63,7 @@ def strateg_start569(type, source, k):
                         k = random.randrange(0, 9999)
                         chislo2569[groupchat]={'k':k}
                         strateg_start570(type, source, k)
-                
+
 def strateg_msg(HREN,type,source,parameters):
         groupchat = source[1]
         nick=source[2]
@@ -118,7 +118,7 @@ def strateg_msg(HREN,type,source,parameters):
                                         MONEY[jid] = 100
                                 MONEY[jid] += 15
                                 with file('dynamic/money.txt', 'w') as fp: fp.write(str(MONEY))
-                                reply(type,source,u'ты выиграл, молодец\n Общий сщет: '+str(MONEY[jid])+'$')
+                                reply(type,source,u'ты выиграл, молодец\n Общий счет: '+str(MONEY[jid])+'$')
                                 del chislo2568[groupchat]
                                 return
                         if t<0:

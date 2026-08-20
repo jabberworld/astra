@@ -10,15 +10,17 @@
 
 strip_tags = re.compile(r'<[^<>]+>')
 
+from urllib.parse import quote
+
 def handler_shifr(type, source, body):
         if body:
-                if len(body) >= 4 or len(body) <= 10:
+                if 4 <= len(body) <= 10:
                         body = body.lower()
                         try:
-                                data = read_url('http://combats.stalkers.ru/?a=analiz_nick&word=%s' % (body.encode('windows-1251')), 'Mozilla/5.0')
+                                data = read_url('http://combats.stalkers.ru/?a=analiz_nick&word=%s' % quote(body.encode('windows-1251')), 'Mozilla/5.0')
                                 repl = re_search(data, "<tr><td><div style='text-align:center;'><b>", '</b></div></td></tr></table><center>')
                                 repl = strip_tags.sub('', replace_all(repl, {'<br />': '\n', '<br>': '\n'}))
-                                reply(type, source, unicode(repl, 'windows-1251'))
+                                reply(type, source, repl)
                         except:
                                 reply(type, source, u'что-то сломалось...')
                 else:

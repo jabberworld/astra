@@ -17,7 +17,7 @@ def elka1(type, source, body):
       if source[1] in A_TOPIC.keys():
          if source[1] not in E_CON.keys():
             E_CON[source[1]] = 1
-            ELKA[source[1]] = '''.
+            ELKA[source[1]] = r'''.
             ¨¨¨¨¨¨¨¨¨¨*
             ¨¨¨¨¨¨¨¨¨***
             ¨¨¨¨¨¨¨¨*****
@@ -57,7 +57,7 @@ def elka1(type, source, body):
             if source[1] not in E_SH.keys():
                E_SH[source[1]] = 1
             if source[1] in A_C_T.keys():
-               ELKA[source[1]] = '''.
+               ELKA[source[1]] = r'''.
                ¨¨¨¨¨¨¨¨¨★
                ¨¨¨¨¨¨¨¨¨**
                ¨¨¨¨¨¨¨¨¨*o*

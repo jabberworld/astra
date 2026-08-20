@@ -2,7 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import re
-import urllib.request as urllib2
+import requests
+
+TVRU_HEADERS = {'User-Agent': 'Mozilla/5.0 (Linux; U; Android 2.2.1; sv-se; HTC Wildfire Build/FRG83D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1'}
+
+def http_get(url):
+        proxies = {'http': NETWORK_PROXY, 'https': NETWORK_PROXY} if NETWORK_PROXY else None
+        return requests.get(url, headers=TVRU_HEADERS, proxies=proxies,
+                            timeout=NETWORK_TIMEOUT).content.decode('utf-8', 'replace')
 
 def prog_grabru(code, n='1'):
         kod=code.lower()
@@ -10,9 +17,7 @@ def prog_grabru(code, n='1'):
         if kod == '' or not kod.isdecimal():
                 program = u'И какой канал мне показывать? Номер канала можно узнать, дав команду боту "тв_лист"'
                 return program
-        req = urllib2.Request('http://m.tv.yandex.ru/?channel='+kod+'&when='+n+'&day='+prog_listru()[0])
-        req.add_header('User-Agent','Mozilla/5.0 (Linux; U; Android 2.2.1; sv-se; HTC Wildfire Build/FRG83D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1')
-        r = urllib2.urlopen(req, timeout=20).read().decode('utf-8', 'replace')
+        r = http_get('http://m.tv.yandex.ru/?channel='+kod+'&when='+n+'&day='+prog_listru()[0])
         r = re.findall('<th class="channel">(.*?)Выбор каналов', r, re.DOTALL | re.IGNORECASE)
         if not r:
             program = u'Нет программы на сегодня.'
@@ -27,10 +32,7 @@ def prog_grabru2(code):
     return prog_grabru(code, n='2')
 
 def prog_listru():
-    req = urllib2.Request('http://m.tv.yandex.ru/')
-    req.add_header('User-Agent','Mozilla/5.0 (Linux; U; Android 2.2.1; sv-se; HTC Wildfire Build/FRG83D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1')
-
-    r = urllib2.urlopen(req, timeout=20).read().decode('utf-8', 'replace')
+    r = http_get('http://m.tv.yandex.ru/')
     day = re.findall('<input type="hidden" name="day" value="(.*?)"', r, re.DOTALL | re.IGNORECASE)
     if day: day = day[0]
 
@@ -48,18 +50,27 @@ def prog_listru():
     return day, program
 
 def handler_TVru_get(type, source, parameters):
-        reply(type,source, prog_grabru(parameters))
+        try:
+                reply(type,source, prog_grabru(parameters))
+        except Exception:
+                reply(type, source, u'не могу получить программу, сервис недоступен')
 
 def handler_TVru_get2(type, source, parameters):
         if type == 'public':
                 reply(type,source,u'смотри приват!')
-        reply('private',source, prog_grabru2(parameters))
+        try:
+                rep = prog_grabru2(parameters)
+        except Exception:
+                rep = u'не могу получить программу, сервис недоступен'
+        reply('private',source, rep)
 
 def handler_TVru_list(type, source, parameters):
         if type == 'public':
                 reply(type,source,u'смотри приват!')
-        rep=''
-        f=prog_listru()[1]
+        try:
+                f = prog_listru()[1]
+        except Exception:
+                f = u'не могу получить список каналов, сервис недоступен'
         reply('private',source, f)
 
 def tv_sort(a, b):
@@ -79,9 +90,13 @@ def handler_TVru_search(type, source, parameters):
         parameters=parameters.lower()
         if type == 'public':
                 reply(type,source,u'смотри приват!')
+        try:
+                f = prog_listru()[1]
+        except Exception:
+                reply('private', source, u'не могу получить список каналов, сервис недоступен')
+                return
         rep=''
-        f=prog_listru()[1].split(',')
-        for x in f:
+        for x in f.split(','):
                 x=x.lower()
                 if x.count('-'):
                         c=x.split('-')[1]

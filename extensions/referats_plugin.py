@@ -48,9 +48,9 @@ def handler_refer(type, source, parameters):
                 reply(type, source, u'Не существующая категория!\nподробнее "помощь реферат"')
                 return
         try:
-                proxies = {'http': WEATHER_PROXY, 'https': WEATHER_PROXY} if WEATHER_PROXY else None
+                proxies = {'http': NETWORK_PROXY, 'https': NETWORK_PROXY} if NETWORK_PROXY else None
                 r = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
-                                 proxies=proxies, timeout=WEATHER_TIMEOUT)
+                                 proxies=proxies, timeout=NETWORK_TIMEOUT)
                 target = r.content.decode('cp1251', 'replace')
                 od = re.search('<h1 style="color:black; margin-left:0;">', target)
                 if not od:

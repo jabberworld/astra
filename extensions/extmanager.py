@@ -60,7 +60,7 @@ def extManager(mType, source, args):
                 a = args.split()
                 name, fullName = a[0], a[0] + ".py"
                 afterA0 = args[(args.find(" ") + 1):].strip()
-                extList = re.findall("\">(.*\.py)</a></li>", read_url(svnUrl % "extensions")) #"
+                extList = re.findall("\">(.*\\.py)</a></li>", read_url(svnUrl % "extensions")) #"
                 extList = [x[:-3] for x in extList]
 
                 if a[0] == u"лист":

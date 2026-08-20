@@ -1186,6 +1186,8 @@ def PRESENCE_PROCESSING(client, stanza):
                 roster_subscribe(conf)
         if conf in GROUPCHATS:
                 nick = fromjid.getResource()
+                if not nick:
+                        raise xmpp.NodeProcessed()
                 if Ptype == 'unavailable':
                         reason = stanza.getReason() or stanza.getStatus()
                         if nick in GROUPCHATS[conf] and GROUPCHATS[conf][nick]['ishere']:

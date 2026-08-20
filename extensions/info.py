@@ -30,7 +30,7 @@ def handler_online_here(type, source, body):
                 list = ''
                 col = 0
                 for usr in GROUPCHATS[source[1]]:
-                        if GROUPCHATS[source[1]][usr]['ishere']:
+                        if usr and GROUPCHATS[source[1]][usr]['ishere']:
                                 col = col + 1
                                 list += '\n'+str(col)+'. '+usr
                                 if stalker in ADLIST:
