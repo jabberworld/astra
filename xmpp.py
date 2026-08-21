@@ -442,10 +442,11 @@ def _local_attr(sub, name):
 
 
 class Message(Node):
-	def __init__(self, to=None, body=None, mtype=None, real=None, el=None):
+	def __init__(self, to=None, body=None, mtype=None, real=None, el=None, typ=None):
 		if real is not None:
 			super(Message, self).__init__(real=real, el=el)
 		else:
+			mtype = mtype if mtype is not None else typ
 			super(Message, self).__init__("message", attrs={"to": to, "type": mtype})
 			if body is not None:
 				self.setTagData("body", body)

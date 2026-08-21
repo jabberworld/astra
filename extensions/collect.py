@@ -27,7 +27,7 @@ def handler_clean(mType, source, body):
       if source[1] in GROUPCHATS:
          if mType != "private":
             change_bot_status(source[1], u"Чистка...", "dnd")
-         zero = xmpp.Message(source[1], "", typ = "groupchat")
+         zero = xmpp.Message(source[1], "", mtype = "groupchat")
          zero.setTag("body")
          count = 24
          if check_number(body):
@@ -46,7 +46,7 @@ def handler_clean(mType, source, body):
             change_bot_status(source[1], message, status)
    if body==u'беспалева':
      if source[1] in GROUPCHATS:
-         zero = xmpp.Message(source[1], "", typ = "groupchat")
+         zero = xmpp.Message(source[1], "", mtype = "groupchat")
          zero.setTag("body")
          count = 24
          if check_number(body):
@@ -61,7 +61,7 @@ def handler_clean(mType, source, body):
                time.sleep(1.4)
    if body==u'видно':
      if source[1] in GROUPCHATS:
-         zero = xmpp.Message(source[1], u"•", typ = "groupchat")
+         zero = xmpp.Message(source[1], u"•", mtype = "groupchat")
          zero.setTag("body")
          count = 24
          if check_number(body):
@@ -82,7 +82,7 @@ def handler_clean(mType, source, body):
       if source[1] in GROUPCHATS:
          if mType != "private":
             reply(mType,source,mes)
-         zero = xmpp.Message(source[1], "", typ = "groupchat")
+         zero = xmpp.Message(source[1], "", mtype = "groupchat")
          zero.setTag("body")
          count = 24
          if check_number(body):
