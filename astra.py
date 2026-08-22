@@ -967,7 +967,7 @@ def handler_moder(conf, nick, reason):
 
 def roster_check(instance, body):
         if instance not in ANSWER:
-                QA = random.choice(QUESTIONS.keys())
+                QA = random.choice(list(QUESTIONS))
                 ANSWER[instance] = {'key': QUESTIONS[QA]['answer'], 'tryes': 0}
                 msg(instance, u'Привет! Мне нужно убедиться, что ты не бот: %s. У тебя три попытки и 1 минута!' % (QUESTIONS[QA]['question']))
                 INFO['thr'] += 1

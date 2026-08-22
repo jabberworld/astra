@@ -15,7 +15,7 @@ def handler_local_macro(type, source, Params):
         if source[1] in GROUPCHATS:
                 if Params:
                         keys = Params.split()
-                        if keys >= 2:
+                        if len(keys) >= 2:
                                 cmd = keys[0].strip().lower()
                                 body = Params[(Params.find(' ') + 1):].strip()
                                 if cmd in [u'адд', '+']:
@@ -98,7 +98,7 @@ def handler_global_macro(type, source, Params):
         if source[1] in GROUPCHATS:
                 if Params:
                         keys = Params.split()
-                        if keys >= 2:
+                        if len(keys) >= 2:
                                 cmd = keys[0].strip().lower()
                                 body = Params[(Params.find(' ') + 1):].strip()
                                 if cmd in [u'адд', '+']:

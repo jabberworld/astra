@@ -17,7 +17,7 @@ def handler_verification(conf, nick, afl, role):
                 if jid not in ADLIST:
                         if not conf in OTVET:
                                 OTVET[conf] = {}
-                        QA = random.choice(QUESTIONS.keys())
+                        QA = random.choice(list(QUESTIONS))
                         OTVET[conf][jid] = {'ansver': QUESTIONS[QA]['answer'], 'col': 0}
                         handler_visitor(conf, nick, u'%s: Авторизация...' % (handler_botnick(conf)))
                         msg(conf+'/'+nick, u'Привет! Это IQ проверка, чтобы получить голос %s, у тебя три попытки!' % (QUESTIONS[QA]['question']))
