@@ -41,6 +41,9 @@ def handler_access_view_access(type, source, parameters):
                                 levdesc = '(%s)' % ACCESS_NAME[ handler_jid(source[0]) ][ level ]
                 reply(type, source, level+' '+levdesc)
         else:
+                if source[1] not in GROUPCHATS:
+                        reply(type, source, u'эта команда работает только в конференции')
+                        return
                 nicks = GROUPCHATS[source[1]].keys()
                 if parameters.strip() in nicks:
                         level=str(user_level(source[1]+'/'+parameters.strip(),source[1]))
