@@ -14,7 +14,7 @@ TIMERS = {'col': 0, 'tmrs': {}}
 def timer_col():
         col = 0
         for timer in TIMERS['tmrs']:
-                if TIMERS['tmrs'][timer].isAlive():
+                if TIMERS['tmrs'][timer].is_alive():
                         col = col + 1
         return col
 
@@ -38,7 +38,7 @@ def handler_command_timer(type, source, body):
                                 if command in [u'стоп', 'stop']:
                                         if jid in ADLIST:
                                                 if timer in TIMERS['tmrs']:
-                                                        if TIMERS['tmrs'][timer].isAlive():
+                                                        if TIMERS['tmrs'][timer].is_alive():
                                                                 try:
                                                                         TIMERS['tmrs'][timer].cancel()
                                                                 except:
@@ -96,7 +96,7 @@ def handler_command_timer(type, source, body):
         else:
                 alive = ''
                 for timer in TIMERS['tmrs']:
-                        if TIMERS['tmrs'][timer].isAlive():
+                        if TIMERS['tmrs'][timer].is_alive():
                                 alive += str(timer)+' *'
                 if alive:
                         list = u' таймеров\n- %s из них активно активно (PIDs): %s' % (str(timer_col()), alive)

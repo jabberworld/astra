@@ -325,7 +325,7 @@ def handler_botup_info(type, source, body):
                         repl += u'\n• Использую %.2f МБ оперативной памяти' % (round(memory) / 1024)
                 acol = 0
                 for xthr in threading.enumerate():
-                        if xthr.isAlive():
+                        if xthr.is_alive():
                                 acol += 1
                 repl += u'\n• Создано %i потоков, %i из них активно' % (INFO['thr'], acol)
                 if acol <= 6:
@@ -340,7 +340,7 @@ def handler_botup_info(type, source, body):
                    repl += u'\n• Нагрузка: Я в ахуе'
                 alive = ''
                 for timer in CRON['tmrs']:
-                        if CRON['tmrs'][timer].isAlive():
+                        if CRON['tmrs'][timer].is_alive():
                                 alive += str(timer)+' *'
                 if alive:
                         list = u' таймеров[циклов]\n- %s из них активно активно (PIDs): %s' % (str(len_cron()), alive)
@@ -352,7 +352,7 @@ def handler_botup_info(type, source, body):
                         repl += u'\n• Пока небыло запущено ни одного сron`а'
                 alive = ''
                 for timer in TIMERS['tmrs']:
-                        if TIMERS['tmrs'][timer].isAlive():
+                        if TIMERS['tmrs'][timer].is_alive():
                                 alive += str(timer)+' *'
                 if alive:
                         list = u' таймеров\n- %s из них активно активно (PIDs): %s' % (str(timer_col()), alive)

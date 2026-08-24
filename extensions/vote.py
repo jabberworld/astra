@@ -253,7 +253,7 @@ def handler_poll_start_stop(type, source, body):
                                 msg(source[1], poll_text)
                                 if POLLINGS[source[1]]['options']['time']['time']:
                                         if POLLINGS[source[1]]['tick']:
-                                                if POLLINGS[source[1]]['tick'].isAlive():
+                                                if POLLINGS[source[1]]['tick'].is_alive():
                                                         vote_tick(0, source[1])
                                         vote_tick(POLLINGS[source[1]]['options']['time']['time'], source[1])
                                         POLLINGS[source[1]]['options']['time']['start'] = time.time()
@@ -290,7 +290,7 @@ def vote_tick(timee, conf, start = True):
         if start:
                 if timee:
                         if POLLINGS[conf]['tick']:
-                                if POLLINGS[conf]['tick'].isAlive():
+                                if POLLINGS[conf]['tick'].is_alive():
                                         POLLINGS[conf]['tick'].cancel()
                         POLLINGS[conf]['tick'] = threading.Timer(timee, handler_vote_endpoll_tick,(conf,))
                         try:

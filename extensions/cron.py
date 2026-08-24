@@ -14,7 +14,7 @@ CRON = {'col': 0, 'tmrs': {}}
 def len_cron():
         col = 0
         for timer in CRON['tmrs']:
-                if CRON['tmrs'][timer].isAlive():
+                if CRON['tmrs'][timer].is_alive():
                         col = col + 1
         return col
 
@@ -58,7 +58,7 @@ def handler_cron_command(type, source, body):
                                 if cycles.lower() in [u'стоп', 'stop']:
                                         if jid in ADLIST:
                                                 if timer in CRON['tmrs']:
-                                                        if CRON['tmrs'][timer].isAlive():
+                                                        if CRON['tmrs'][timer].is_alive():
                                                                 try:
                                                                         CRON['tmrs'][timer].cancel()
                                                                 except:
@@ -125,7 +125,7 @@ def handler_cron_command(type, source, body):
         else:
                 alive = ''
                 for timer in CRON['tmrs']:
-                        if CRON['tmrs'][timer].isAlive():
+                        if CRON['tmrs'][timer].is_alive():
                                 alive += str(timer)+' *'
                 if alive:
                         list = u' таймеров[циклов]\n- %s из них активно активно (PIDs): %s' % (str(len_cron()), alive)
