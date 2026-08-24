@@ -14,12 +14,16 @@ def handler_set_access(type, source, Params):
  if source[1] in GROUPCHATS:
   if Params:
    splitdata = Params.split()
-   if len(splitdata) <= 3:
-    item = splitdata[0].strip()
-    if len(splitdata) >= 2:
-     access = splitdata[1].strip()
-    elif len(splitdata) == 1:
+   if splitdata:
+    forever = splitdata[-1].lower() in (u'навсегда', u'forever', u'f')
+    if forever:
+     splitdata = splitdata[:-1]
+    if splitdata and check_number(splitdata[-1]):
+     access = splitdata[-1].strip()
+     item = ' '.join(splitdata[:-1]).strip()
+    else:
      access = '0'
+     item = Params.strip()
     if check_number(access):
      if item.count('@') and item.count('.'):
       jidto = item
@@ -43,7 +47,7 @@ def handler_set_access(type, source, Params):
         reply(type, source, u'больше 30 нельзя!')
        elif int(access) < -5:
         reply(type, source, u'меньше -5 нельзя!')
-       elif len(splitdata) == 1:
+       elif access == '0':
         if source[1] in CONFACCESS and jidto in CONFACCESS[source[1]]:
          change_conf_access(source[1], jidto)
         else:
@@ -52,13 +56,13 @@ def handler_set_access(type, source, Params):
          reply(type, source, u'сняла доступ с "%s"' % (item))
         else:
          reply(type, source, u'снял доступ с "%s"' % (item))
-       elif len(splitdata) == 2:
+       elif access != '0' and not forever:
         change_local_access(source[1], jidto, int(access))
         if source[1] not in POL_SEX.keys():
          reply(type, source, u'для "%s" дала временно доступ: %s' % (item, access))
         else:
          reply(type, source, u'для "%s" дал временно доступ: %s' % (item, access))
-       elif len(splitdata) == 3:
+       elif forever:
         change_conf_access(source[1], jidto, int(access))
         if source[1] not in POL_SEX.keys():
          reply(type, source, u'для "%s" дала навсегда доступ: %s' % (item, access))
@@ -79,9 +83,13 @@ def handler_set_access(type, source, Params):
 
 def handler_set_access_glob(type, source, Params):
  if Params:
-  splitdata = Params.split()
-  if len(splitdata) <= 2:
-   item = splitdata[0].strip()
+   splitdata = Params.split()
+   if splitdata and check_number(splitdata[-1]):
+    access = splitdata[-1].strip()
+    item = ' '.join(splitdata[:-1]).strip()
+   else:
+    access = '0'
+    item = Params.strip()
    if item.count('@') and item.count('.'):
     jid = item
    elif source[1] in GROUPCHATS and item in GROUPCHATS[source[1]]:
@@ -89,20 +97,7 @@ def handler_set_access_glob(type, source, Params):
    else:
     jid = False
    if jid:
-    if len(splitdata) == 2:
-     access = splitdata[1].strip()
-     if check_number(access):
-      if access != '0':
-       if jid not in ADLIST and int(access) >= 80:
-        ADLIST.append(jid)
-       change_global_access(jid, int(access))
-       if source[1] not in POL_SEX.keys():
-        reply(type, source, u'Для "%s" установила доступ: %s' % (item, access))
-       else:
-        reply(type, source, u'Для "%s" установил доступ: %s' % (item, access))
-     else:
-      reply(type, source, u'Доступ что ты пытаешся дать не является числом!')
-    elif len(splitdata) == 1:
+    if access == '0':
      if jid in GLOBACCESS:
       if jid in ADLIST:
        ADLIST.remove(jid)
@@ -113,10 +108,16 @@ def handler_set_access_glob(type, source, Params):
        reply(type, source, u'Снял доступ c "%s"' % (item))
      else:
       reply(type, source, u'У "%s" и так нет глобального доступа!' % (item))
+    else:
+     if jid not in ADLIST and int(access) >= 80:
+      ADLIST.append(jid)
+     change_global_access(jid, int(access))
+     if source[1] not in POL_SEX.keys():
+      reply(type, source, u'Для "%s" установила доступ: %s' % (item, access))
+     else:
+      reply(type, source, u'Для "%s" установил доступ: %s' % (item, access))
    else:
     reply(type, source, u'Это не жид да и никого с таким ником я незнаю!')
-  else:
-   reply(type, source, u'перебор параметров')
  else:
   reply(type, source, u'а дальше?')
 

@@ -10,6 +10,7 @@
 COLOR = [u'красный', u'зеленый', u'синий', u'голубенький', u'белый', u'желтый', u'серый', u'оранжевый', u'фиолетовый', u'серо-буро-малиновый']
 
 PROVOD = {}
+BOMB_TIMERS = {}
 
 def color_norm(s):
         return (s or u'').strip().lower().replace(u'ё', u'е')
@@ -20,6 +21,15 @@ def bomb_key_for(nick):
                 if color_norm(key) == t:
                         return key
         return None
+
+def _bomb_clear(conf, nick):
+        key = conf+'/'+nick
+        timer = BOMB_TIMERS.pop(key, None)
+        if timer is not None:
+                try:
+                        timer.cancel()
+                except:
+                        pass
 
 def bomb(type, source, args):
         if source[1] in GROUPCHATS:
@@ -43,7 +53,10 @@ def bomb(type, source, args):
                         time = random.randrange(15, 45)
                         msg(source[1], nick+u': вам вручена бомба, на ней '+str(len(provoda))+u' провода(ов): '+', '.join(provoda)+u' выберите цвет провода который нужно перерезать, на таймере '+str(time)+u' секунд')
                         try:
-                                threading.Timer(time, bomb_start,(source[1], nick)).start()
+                                _bomb_clear(source[1], nick)
+                                timer = threading.Timer(time, bomb_start,(source[1], nick))
+                                BOMB_TIMERS[source[1]+'/'+nick] = timer
+                                timer.start()
                         except:
                                 pass
                 else:
@@ -59,18 +72,26 @@ def bomb_start(conf, nick):
                         msg(conf, nick+u': ПТЫДЫЩЬ! Время вышло, вы не успели перерезать провод!')
                         handler_kick(conf, key, u'время вышло! птыдыщь!')
                 del PROVOD[key]
+                _bomb_clear(conf, key)
 
 def bomb_msg(raw, type, source, body):
         key = bomb_key_for(source[2])
         if key:
                 answer = color_norm(body)
+                selfnick = color_norm(handler_botnick(source[1]))
+                for pre in (selfnick+u':', selfnick+u',', u'@'+selfnick+u':'):
+                        if answer.startswith(pre):
+                                answer = answer[len(pre):].lstrip()
+                                break
                 if answer == PROVOD[key]:
                         reply(type, source, u'бомба обезврежена!')
                         del PROVOD[key]
+                        _bomb_clear(source[1], source[2])
                 else:
                         reply(type, source, u'птыдыщь! не тот провод, надо было перерезать: '+PROVOD[key])
                         handler_kick(source[1], key, u'птыдыщь!')
                         del PROVOD[key]
+                        _bomb_clear(source[1], source[2])
 
 register_message_handler(bomb_msg)
 command_handler(bomb, 10, "bomba")
