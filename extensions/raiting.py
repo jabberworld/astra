@@ -11,10 +11,9 @@ from urllib.parse import urlencode
 compile_st = re.compile("<[^<>]+?>")
 
 def uHTML(text):
-        from HTMLParser import HTMLParser
+        from html import unescape
         text = text.replace("<br>", "\n ").replace("</br>", "\n").replace("<br />", "\n")
-        text = HTMLParser().unescape(text)
-        del HTMLParser
+        text = unescape(text)
         return text
 
 def decodeHTML(data):

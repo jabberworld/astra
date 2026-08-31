@@ -22,81 +22,58 @@ def handler_chat_cache(stanza, ltype, source, body):
                 body = body[:256]+'[...]'
         CHAT_CACHE[source[1]]['2'] = header+body
 
+def _clean_send(conf, count, text = u''):
+        zero = xmpp.Message(conf, text, mtype = "groupchat")
+        zero.setTag("body")
+        for i in range(1, count + 1):
+                try: JCON.send(zero)
+                except IOError: return
+                INFA['outmsg'] += 1
+                if i < count:
+                        time.sleep(1.4)
+
+def _clean_count(body):
+        count = 24
+        for token in (body or u'').split():
+                if check_number(token):
+                        number = int(token)
+                        if 0 < number < 51:
+                                count = number
+                        break
+        return count
+
 def handler_clean(mType, source, body):
-   if body==u'тихо':
-      if source[1] in GROUPCHATS:
-         if mType != "private":
-            change_bot_status(source[1], u"Чистка...", "dnd")
-         zero = xmpp.Message(source[1], "", mtype = "groupchat")
-         zero.setTag("body")
-         count = 24
-         if check_number(body):
-            number = int(body)
-            if number < 51:
-               count = number
-         for msg in range(count):
-            try: JCON.send(zero)
-            except IOError: return
-            INFA['outmsg'] += 1
-            if (msg != count):
-               time.sleep(1.4)
-         if mType != "private":
-            message = STATUS[source[1]]["message"]
-            status = STATUS[source[1]]["status"]
-            change_bot_status(source[1], message, status)
-   if body==u'беспалева':
-     if source[1] in GROUPCHATS:
-         zero = xmpp.Message(source[1], "", mtype = "groupchat")
-         zero.setTag("body")
-         count = 24
-         if check_number(body):
-            number = int(body)
-            if number < 51:
-               count = number
-         for msg in range(count):
-            try: JCON.send(zero)
-            except IOError: return
-            INFA['outmsg'] += 1
-            if (msg != count):
-               time.sleep(1.4)
-   if body==u'видно':
-     if source[1] in GROUPCHATS:
-         zero = xmpp.Message(source[1], u"•", mtype = "groupchat")
-         zero.setTag("body")
-         count = 24
-         if check_number(body):
-            number = int(body)
-            if number < 51:
-               count = number
-         for msg in range(count):
-            try: JCON.send(zero)
-            except IOError: return
-            INFA['outmsg'] += 1
-            if (msg != count):
-               time.sleep(1.4)
-   if not body:
-      mis = [u'Зачистка начата :) ',u'Антиупарыватель конфы запущен!',u'4.....3.....2.....1.....ПОЕХАЛИ!!!',u'Мыло душистое! Пена пушистая! Изыдти нафиг мессаги! Во имя Конфы и всех Участников. Фтопку!',u'Убью того, кто так на гадил!!!',u'Э... Нанимай уборщицу',u'Ну смотря сколько платишь',u'И чито я буду с этого иметь?',u'Купи себе скатерть самобранку']
-      mes = random.choice(mis)
-      mis2 = [u'ога, гатова :) ',u'антиупарывание прошло успешно 8) ',u'Все убрано, можно и отдохнуть *BEACH* ',u'Полет нормальный',u'Ничтяк *DANCE* ',u'В следующий раз юзай моющий пылесос',u'5 баксов с тебя',u'Может тебе еще и лизгинка сплясать?!']
-      kl = random.choice(mis2)
-      if source[1] in GROUPCHATS:
-         if mType != "private":
-            reply(mType,source,mes)
-         zero = xmpp.Message(source[1], "", mtype = "groupchat")
-         zero.setTag("body")
-         count = 24
-         if check_number(body):
-            number = int(body)
-            if number < 51:
-               count = number
-         for msg in range(count):
-            try: JCON.send(zero)
-            except IOError: return
-            INFA['outmsg'] += 1
-            if (msg != count):
-               time.sleep(1.4)
-         if mType != "private":
-            reply(mType,source,kl)
+        if source[1] not in GROUPCHATS:
+                return
+        count = _clean_count(body)
+        mode = None
+        for token in (body or u'').split():
+                low = token.lower()
+                if low in (u'тихо', u'беспалева', u'видно'):
+                        mode = low
+                        break
+        if mode == u'тихо':
+                if mType != "private":
+                        change_bot_status(source[1], u"Чистка...", "dnd")
+                _clean_send(source[1], count)
+                if mType != "private":
+                        message = STATUS[source[1]]["message"]
+                        status = STATUS[source[1]]["status"]
+                        change_bot_status(source[1], message, status)
+        elif mode == u'беспалева':
+                _clean_send(source[1], count)
+        elif mode == u'видно':
+                _clean_send(source[1], count, u"•")
+        else:
+                mis = [u'Зачистка начата :) ',u'Антиупарыватель конфы запущен!',u'4.....3.....2.....1.....ПОЕХАЛИ!!!',u'Мыло душистое! Пена пушистая! Изыдти нафиг мессаги! Во имя Конфы и всех Участников. Фтопку!',u'Убью того, кто так на гадил!!!',u'Э... Нанимай уборщицу',u'Ну смотря сколько платишь',u'И чито я буду с этого иметь?',u'Купи себе скатерть самобранку']
+                mis2 = [u'ога, гатова :) ',u'антиупарывание прошло успешно 8) ',u'Все убрано, можно и отдохнуть *BEACH* ',u'Полет нормальный',u'Ничтяк *DANCE* ',u'В следующий раз юзай моющий пылесос',u'5 баксов с тебя',u'Может тебе еще и лизгинка сплясать?!']
+                mes = random.choice(mis)
+                kl = random.choice(mis2)
+                if mType != "private":
+                        reply(mType, source, mes)
+                _clean_send(source[1], count)
+                if mType != "private":
+                        reply(mType, source, kl)
 
 def last_chat_cache(type, source, body):
         confs = sorted(GROUPCHATS.keys())

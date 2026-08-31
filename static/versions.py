@@ -3,7 +3,7 @@
 Caps = 'http://miranda-im.org/caps'
 BOT_VER = 4
 CORE_MODE = 4
-BOT_REV = 8
+BOT_REV = 9
 NONAME = 'Astra'
 if os.access('.svn/entries', os.R_OK):
  try:

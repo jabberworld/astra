@@ -142,7 +142,9 @@ from sTools import *
 ## os info.
 os_name = "Python %s, slixmpp %s" % (platform.python_version(), slixmpp.__version__)
 
-from webtools import *
+from webtools import (IDNA, byteFormat, decode_page, getTagArg, getTagData,
+                      read_link, read_url, re_search, stripTags, uHTML,
+                      unicode_fix, UserAgents)
 UserAgents["BlackSmith"] = "BlackSmith XMPP-BOT mark.1 (%s; %d.%d; ru)" % (os_name, BOT_VER, CORE_MODE)
 
 ## File workers.

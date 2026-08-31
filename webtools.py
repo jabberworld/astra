@@ -18,7 +18,7 @@ except ImportError:
 	NETWORK_PROXY, NETWORK_TIMEOUT = None, 20
 
 UserAgents = {"OperaMini": "Opera/9.60 (J2ME/MIDP; Opera Mini/4.2.13337/724; U; ru)",  # Opera Mini 4.2 User-Agent
-			  "Firefox": "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:21.0) Gecko/20130309 Firefox/21.0"}
+			  "Firefox": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"}
 
 ## HTML Unescape and <br> tag replace.
 edefs = dict()

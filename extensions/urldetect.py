@@ -13,14 +13,16 @@ def urlWatcher(raw, mType, source, body):
         if mType == "public" and (source[1] in urlDetect) and has_access(source[0], 11, source[1]):
                 if len(body) < 500:
                         try:
-                                url = re.findall(r'(http[s]?://.*)', body)
+                                m = re.search(r'https?://\S+', body)
+                                url = m.group(0).strip(".,;:!?)]}\"") if m else ''
                                 if url:
-                                        url = url[0].split()[0].strip(".,\\)\"")
-                                        if not chkUnicode(url):
+                                        if globals().get('chkUnicode') and not chkUnicode(url):
                                                 url = "http://" + IDNA(url)
-                                        proxies = {'http': NETWORK_PROXY, 'https': NETWORK_PROXY} if NETWORK_PROXY else None
+                                        _proxy = globals().get('NETWORK_PROXY')
+                                        _timeout = globals().get('NETWORK_TIMEOUT', 20)
+                                        proxies = {'http': _proxy, 'https': _proxy} if _proxy else None
                                         opener = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
-                                                              proxies=proxies, timeout=NETWORK_TIMEOUT, stream=True)
+                                                              proxies=proxies, timeout=_timeout, stream=True)
                                         ContentType = opener.headers.get("Content-Type") or ""
                                         if "text/html" in ContentType or url.rstrip("/").endswith((".html", ".htm")):
                                                 data = b''
@@ -39,6 +41,7 @@ def urlWatcher(raw, mType, source, body):
                                         opener.close()
                                         msg(source[1], answer)
                         except Exception:
+                            lytic_crashlog(urlWatcher, command="urldetect")
                             msg(source[1],u'не могу посмотреть инфу о ссылке. :(')
 
 def urlWatcherConfig(mType, source, args):
