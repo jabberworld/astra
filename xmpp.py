@@ -58,6 +58,7 @@ NS_MUC_ROOMCONFIG = "http://jabber.org/protocol/muc#roomconfig"
 NS_CAPS = "http://jabber.org/protocol/caps"
 NS_DATA = "jabber:x:data"
 NS_TIME_X = "jabber:x:delay"
+NS_URN_DELAY = "urn:xmpp:delay"
 NS_URN_TIME = "urn:xmpp:time"
 NS_PING = "urn:xmpp:ping"
 NS_RECEIPTS = "urn:xmpp:receipts"
@@ -280,8 +281,10 @@ class Node(object):
 
 	def getTimestamp(self):
 		for sub in self.el.iter():
-			ns = _local_attr(sub, "xmlns")
-			if sub is not self.el and (_local(sub.tag) == "delay" or _local(sub.tag) == "x") and ns in (NS_TIME_X, "jabber:x:delay"):
+			ns = sub.get("xmlns")
+			if not ns and isinstance(sub.tag, str) and sub.tag.startswith("{"):
+				ns = sub.tag[1:].split("}")[0]
+			if sub is not self.el and (_local(sub.tag) == "delay" or _local(sub.tag) == "x") and ns in (NS_TIME_X, "jabber:x:delay", NS_URN_DELAY):
 				return sub.get("stamp")
 		return None
 

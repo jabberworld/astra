@@ -134,6 +134,12 @@ GLOBACCESS = {}
 GROUPCHATS = {}
 UNAVALABLE = []
 
+## Clean window: посчитанное при входе число сообщений истории по конференциям.
+CONF_HISTORY = {}         # conf -> число сообщений истории, отданных сервером при входе
+CONF_HISTORY_UNTIL = {}   # conf -> time.time(), до которого считаем историю окна
+HISTORY_WINDOW_TIMEOUT = 10  # секунд после входа на доставку истории
+MAX_HISTORY_STANZAS = 1000000  # запрос истории MUC (сервер ограничит своим буфером)
+
 MACROS = macros.Macros()
 
 wsmph, smph = threading.Semaphore(), threading.Semaphore(60)
@@ -830,9 +836,11 @@ def send_join_presece(conf, nick, code = None):
         Presence.setShow(STATUS[conf]['status'])
         Presence.setTag('c', namespace = xmpp.NS_CAPS, attrs = {'node': Caps, 'ver': CapsVer})
         Pres = Presence.setTag('x', namespace = xmpp.NS_MUC)
-        Pres.addChild('history', {'maxchars': '0'})
+        Pres.addChild('history', {'maxstanzas': str(MAX_HISTORY_STANZAS)})
         if code:
                 Pres.setTagData('password', code)
+        CONF_HISTORY[conf] = 0
+        CONF_HISTORY_UNTIL[conf] = time.time() + HISTORY_WINDOW_TIMEOUT
         JCON.send(Presence)
 
 def join_groupchat(conf, nick, code = None):
@@ -1068,6 +1076,8 @@ def MESSAGE_PROCESSING(client, stanza):
         if instance in UNAVALABLE and not MSERVE:
                 raise xmpp.NodeProcessed()
         if stanza.getTimestamp():
+                if instance in CONF_HISTORY_UNTIL and time.time() <= CONF_HISTORY_UNTIL[instance]:
+                        CONF_HISTORY[instance] = CONF_HISTORY.get(instance, 0) + 1
                 raise xmpp.NodeProcessed()
         bot_nick, nick = handler_botnick(instance), fromjid.getResource()
         if bot_nick == nick:
@@ -1255,6 +1265,8 @@ def PRESENCE_PROCESSING(client, stanza):
                                 full_jid = str(full_jid)
                                 jid = full_jid.split("/", 1)[0].lower()
                         ishere, role = nick in GROUPCHATS[conf], (stanza.getRole(), stanza.getAffiliation())
+                        if nick == handler_botnick(conf):
+                                CONF_HISTORY_UNTIL[conf] = time.time() + HISTORY_WINDOW_TIMEOUT
                         if not (ishere and GROUPCHATS[conf][nick]['jid'] == jid and GROUPCHATS[conf][nick]['ishere']):
                                 GROUPCHATS[conf][nick] = {"role": role, "caps": stanza.getTagAttr("c", "node"), 'full_jid': full_jid, 'jid': jid, 'join_date': (that_day(), time.gmtime()), 'idle': time.time(), 'joined': time.time(), 'ishere': True}
                                 calc_acc(conf, jid, role)

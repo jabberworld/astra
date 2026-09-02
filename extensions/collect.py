@@ -32,12 +32,13 @@ def _clean_send(conf, count, text = u''):
                 if i < count:
                         time.sleep(1.4)
 
-def _clean_count(body):
-        count = 24
+def _clean_count(body, conf):
+        window = CONF_HISTORY.get(conf, 0)
+        count = window if window > 20 else 24
         for token in (body or u'').split():
                 if check_number(token):
                         number = int(token)
-                        if 0 < number < 51:
+                        if 0 < number <= 100:
                                 count = number
                         break
         return count
@@ -45,7 +46,13 @@ def _clean_count(body):
 def handler_clean(mType, source, body):
         if source[1] not in GROUPCHATS:
                 return
-        count = _clean_count(body)
+        first = (body or u'').split()
+        if first and first[0].lower() == u'размер':
+                window = CONF_HISTORY.get(source[1], 0)
+                used = window if window > 20 else 24
+                reply(mType, source, u'Размер окна для текущей конфы: %d (история при входе: %d). По умолчанию чищу %d сообщений.' % (used, window, used))
+                return
+        count = _clean_count(body, source[1])
         mode = None
         for token in (body or u'').split():
                 low = token.lower()
