@@ -107,6 +107,7 @@ NEWROLE_HANDLERS = []
 NEWSTATUS_HANDLERS = []
 NEWNICK_HANDLERS = []
 MESSAGE_HANDLERS = []
+MAM_HANDLERS = []
 COMMAND_HANDLERS = {}
 PRESENCE_HANDLERS = []
 OUTGOING_MESSAGE_HANDLERS = []
@@ -258,6 +259,13 @@ def register_message_handler(instance):
                 if name == handler.__name__:
                         MESSAGE_HANDLERS.remove(handler)
         MESSAGE_HANDLERS.append(instance)
+
+def register_mam_handler(instance):
+        name = instance.__name__
+        for handler in MAM_HANDLERS:
+                if name == handler.__name__:
+                        MAM_HANDLERS.remove(handler)
+        MAM_HANDLERS.append(instance)
 
 def register_outgoing_message_handler(instance):
         name = instance.__name__
@@ -1071,9 +1079,22 @@ def MESSAGE_PROCESSING(client, stanza):
         fromjid = stanza.getFrom()
         INFO['msg'] += 1
         instance = fromjid.getStripped().lower()
+        try:
+                if '@conference' in instance or stanza.getTag('result') is not None:
+                        write_file('dynamic/msg_log.txt', '[%s] MP enter from=%s type=%s instance=%s has_result=%s has_timestamp=%s\n'
+                                   % (time.strftime('%H:%M:%S', time.gmtime()), fromjid, stanza.getType(), instance,
+                                      stanza.getTag('result') is not None, bool(stanza.getTimestamp())), 'a')
+        except Exception:
+                pass
         if user_level(fromjid, instance) <= -100:
                 raise xmpp.NodeProcessed()
         if instance in UNAVALABLE and not MSERVE:
+                raise xmpp.NodeProcessed()
+        if stanza.getTag('result') is not None and MAM_HANDLERS:
+                for handler in list(MAM_HANDLERS):
+                        with smph:
+                                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (stanza, fromjid, instance,),))
+                                Thread_Run(Thr, handler)
                 raise xmpp.NodeProcessed()
         if stanza.getTimestamp():
                 if instance in CONF_HISTORY_UNTIL and time.time() <= CONF_HISTORY_UNTIL[instance]:
@@ -1149,6 +1170,18 @@ def MESSAGE_PROCESSING(client, stanza):
         if command in COMMANDS:
                 INFO['cmd'] += 1
                 LAST['cmd'] = u'Помощь по командам: "хелп" (последнее действие - "%s")' % (command)
+                if command in ('чисть_мам', u'чистьмам') and 'LAST_MAM_TRIGGER_SID' in globals():
+                        try:
+                                sid = u''
+                                for _sid in stanza.getTags('stanza-id', namespace = xmpp.NS_SID):
+                                        if (_sid.getAttr('by') or '').lower() == instance.lower():
+                                                sid = _sid.getAttr('id') or u''
+                                                break
+                                if not sid:
+                                        sid = stanza.getTagAttr('archived', 'id') or u''
+                                LAST_MAM_TRIGGER_SID[instance] = sid
+                        except Exception:
+                                pass
                 call_command_handlers(command, type, [fromjid, instance, nick], str(Parameters), rcmd)
                 LAST['time'] = time.time()
         else:

@@ -63,6 +63,15 @@ NS_URN_TIME = "urn:xmpp:time"
 NS_PING = "urn:xmpp:ping"
 NS_RECEIPTS = "urn:xmpp:receipts"
 NS_XHTML_IM = "http://jabber.org/protocol/xhtml-im"
+NS_MAM = "urn:xmpp:mam:2"
+NS_RSM = "http://jabber.org/protocol/rsm"
+NS_FORWARD = "urn:xmpp:forward:0"
+NS_SID = "urn:xmpp:sid:0"
+NS_MODERATE = "urn:xmpp:message-moderate:1"
+NS_RETRACT = "urn:xmpp:message-retract:1"
+NS_FASTEN = "urn:xmpp:fasten:0"
+NS_MODERATE_0 = "urn:xmpp:message-moderate:0"
+NS_RETRACT_0 = "urn:xmpp:message-retract:0"
 
 
 def _nsjump(nsmap):
@@ -825,6 +834,11 @@ class Client(object):
 			stream.register_handler(cb)
 		except Exception:
 			traceback.print_exc()
+		cb_msg = Callback("legacy_message", MatchXPath("{%s}message" % NS_MESSAGE), self._on_message_low)
+		try:
+			stream.register_handler(cb_msg)
+		except Exception:
+			traceback.print_exc()
 		self._stream = stream
 		self._loop = asyncio.new_event_loop()
 		thread = threading.Thread(target=self._run_loop, name="xmpp-loop", daemon=True)
@@ -845,13 +859,93 @@ class Client(object):
 				traceback.print_exc()
 
 	def _on_message(self, ev):
+		try:
+			raw = ev.xml if hasattr(ev, "xml") else None
+			frm = str(getattr(ev, "from", ""))
+			typ = str(getattr(ev, "type", ""))
+			to = str(getattr(ev, "to", ""))
+			body = str(getattr(ev, "body", "") or "")[:60]
+			has_result = (raw is not None) and ("<result" in str(raw))
+			if "@conference" in frm or has_result:
+				self._raw_log(("[%s] _on_message from=%s type=%s to=%s body=%r has_result=%s\n%s\n"
+				                % (time.strftime("%H:%M:%S", time.gmtime()), frm, typ, to, body, has_result, raw)))
+			if time.time() < self._raw_log_until:
+				self._raw_log("[%s] RAW message from=%s type=%s to=%s\n%s\n"
+				              % (time.strftime("%H:%M:%S", time.gmtime()), frm, typ, to, self._safe_raw(raw)))
+		except Exception:
+			traceback.print_exc()
+		self._dispatch(self._handlers.get("message", []), Message(real=ev))
+
+	def _on_message_low(self, ev):
+		try:
+			raw = ev.xml if hasattr(ev, "xml") else None
+			has_result = (raw is not None) and (raw.find("{%s}result" % NS_MAM) is not None)
+		except Exception:
+			has_result = False
+		if not has_result:
+			return
+		if time.time() < self._raw_log_until:
+			self._raw_log("[%s] LOW message (MAM result) from=%s type=%s to=%s\n%s\n"
+			              % (time.strftime("%H:%M:%S", time.gmtime()),
+			                 str(getattr(ev, "from", "")), str(getattr(ev, "type", "")),
+			                 str(getattr(ev, "to", "")), self._safe_raw(raw)))
 		self._dispatch(self._handlers.get("message", []), Message(real=ev))
 
 	def _on_presence(self, ev):
+		try:
+			if time.time() < self._raw_log_until:
+				raw = ev.xml if hasattr(ev, "xml") else None
+				self._raw_log("[%s] RAW presence from=%s type=%s to=%s\n%s\n"
+				              % (time.strftime("%H:%M:%S", time.gmtime()), str(getattr(ev, "from", "")),
+				                 str(getattr(ev, "type", "")), str(getattr(ev, "to", "")), self._safe_raw(raw)))
+		except Exception:
+			traceback.print_exc()
 		self._dispatch(self._handlers.get("presence", []), Presence(real=ev))
 
 	def _on_iq(self, ev):
+		try:
+			if time.time() < self._raw_log_until:
+				self._raw_log("[%s] RAW iq from=%s type=%s to=%s id=%s\n%s\n"
+				              % (time.strftime("%H:%M:%S", time.gmtime()), ev.get("from", ""),
+				                 ev.get("type", ""), ev.get("to", ""), ev.get("id", ""),
+				                 self._safe_raw(ev)))
+		except Exception:
+			traceback.print_exc()
 		self._dispatch(self._handlers.get("iq", []), Iq(real=ev))
+
+	_raw_log_until = 0.0
+	_raw_log_path = "dynamic/raw_log.txt"
+
+	def _raw_log_open_window(self, seconds):
+		self._raw_log_until = time.time() + float(seconds)
+
+	def _raw_log(self, data):
+		try:
+			import astra
+			astra.write_file(self._raw_log_path, data, "a")
+		except Exception:
+			try:
+				from enconf import chkFile
+				with open(chkFile(self._raw_log_path), "a") as fp:
+					fp.write(data)
+			except Exception:
+				traceback.print_exc()
+
+	@staticmethod
+	def _safe_raw(raw):
+		if raw is None:
+			return u"<no-xml>"
+		try:
+			if isinstance(raw, str) or isinstance(raw, bytes):
+				text = raw
+			else:
+				text = ET.tostring(raw, encoding="unicode") if hasattr(raw, "tag") else str(raw)
+			return text.replace("\n", " ")
+		except Exception:
+			try:
+				return str(raw).replace("\n", " ")
+			except Exception:
+				return u"<no-xml>"
 
 	def _on_disconnected(self, ev):
 		self._connected = False
