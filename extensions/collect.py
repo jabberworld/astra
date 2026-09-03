@@ -377,13 +377,12 @@ def handler_clean_mam(mType, source, body):
         nick = None
         limit = 1
         if args:
-                if not check_number(args[0]):
-                        nick = args[0]
+                if check_number(args[-1]):
+                        limit = int(args[-1])
                         if len(args) > 1:
-                                if check_number(args[1]):
-                                        limit = int(args[1])
+                                nick = u' '.join(args[:-1])
                 else:
-                        limit = int(args[0])
+                        nick = u' '.join(args)
         if limit < 1:
                 limit = 1
         if limit > 100:
