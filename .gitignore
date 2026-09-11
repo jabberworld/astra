@@ -1,3 +1,10 @@
-library.zip
-module.zip
 __pycache__
+config.py
+dynamic/
+faillog/
+PID.txt
+logs/
+.cursor/
+.opencode/
+.windsurfrules
+
