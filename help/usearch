@@ -1,0 +1,8 @@
+{
+	u"command_usearch": {
+		u"syntax": u'''us [ник]''',
+		u"cmd": u'''us''',
+		u"examples": [u'''us NONAME'''],
+		u"desc": u'''***.'''
+	}
+}
