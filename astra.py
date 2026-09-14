@@ -84,6 +84,9 @@ def Exit(text, exit, slp):
 
 ## Configuration.
 from config import *
+## Fallbacks for plugins reading network settings from globals (see webtools).
+NETWORK_PROXY = globals().get('NETWORK_PROXY')
+NETWORK_TIMEOUT = globals().get('NETWORK_TIMEOUT', 20)
 
 BOT_PID = os.getpid()
 
