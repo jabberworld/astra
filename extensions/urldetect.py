@@ -68,18 +68,18 @@ def urlWatcher(raw, mType, source, body):
                                         _timeout = globals().get('NETWORK_TIMEOUT', 20)
                                         proxies = {'http': _proxy, 'https': _proxy} if _proxy else None
                                         try:
-                                        opener = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
+                                                opener = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
                                                                       proxies=proxies, timeout=_timeout, stream=True)
-                                        ContentType = opener.headers.get("Content-Type") or ""
-                                        if "text/html" in ContentType or url.rstrip("/").endswith((".html", ".htm")):
-                                                data = b''
-                                                for chunk in opener.iter_content(65536):
-                                                        data += chunk
-                                                        if len(data) >= 2048576:
-                                                                break
-                                                data = _urldetect_decode(data, opener.headers)
-                                                title = getTagData("title", data)
-                                                answer = u"Заголовок: %s" % uHTML(title).replace("\n", "")
+                                                ContentType = opener.headers.get("Content-Type") or ""
+                                                if "text/html" in ContentType or url.rstrip("/").endswith((".html", ".htm")):
+                                                        data = b''
+                                                        for chunk in opener.iter_content(65536):
+                                                                data += chunk
+                                                                if len(data) >= 2048576:
+                                                                        break
+                                                        data = _urldetect_decode(data, opener.headers)
+                                                        title = getTagData("title", data)
+                                                        answer = u"Заголовок: %s" % uHTML(title).replace("\n", "")
                                                 else:
                                                         Type = ContentType
                                                         Size = byteFormat(int(opener.headers.get("Content-Length") or 0))
