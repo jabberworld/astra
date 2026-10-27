@@ -1,13 +1,49 @@
 # BS mark.1
 # /* coding: utf-8 */
-
+# 
 # © simpleApps, 21.05.2012 (12:38:47)
 # Web site header detector
-
+# 
 # BETA! 
 import re
 import requests
 from urllib.parse import urlsplit, urlunsplit
+
+
+def _urldetect_get_charset(headers, data):
+        ct = headers.get("Content-Type") or ""
+        m = re.search(r'charset=([^\s;"]+)', ct, re.I)
+        if m:
+                return m.group(1)
+        try:
+                if isinstance(data, bytes):
+                        head = data[:4096]
+                else:
+                        head = str(data)[:4096]
+                m2 = re.search(r'<meta[^>]+charset=["\']?([^\s;"\'>]+)', head, re.I)
+                if m2:
+                        return m2.group(1)
+                m3 = re.search(r'<meta[^>]+http-equiv=["\']Content-Type["\'][^>]+charset=([^\s;"\'>]+)', head, re.I)
+                if m3:
+                        return m3.group(1)
+        except Exception:
+                pass
+        return None
+
+
+def _urldetect_decode(data, headers):
+        if isinstance(data, str):
+                return data
+        enc = _urldetect_get_charset(headers, data)
+        if enc:
+                try:
+                        enc_norm = enc.strip().lower()
+                        if enc_norm in ('cp-1251', 'windows-1251'):
+                                enc_norm = 'cp1251'
+                        return data.decode(enc_norm, errors='replace')
+                except Exception:
+                        pass
+        return decode_page(data)
 
 
 def urlWatcher(raw, mType, source, body):
@@ -32,18 +68,18 @@ def urlWatcher(raw, mType, source, body):
                                         _timeout = globals().get('NETWORK_TIMEOUT', 20)
                                         proxies = {'http': _proxy, 'https': _proxy} if _proxy else None
                                         try:
-                                                opener = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
+                                        opener = requests.get(url, headers={'User-Agent': UserAgents['Firefox']},
                                                                       proxies=proxies, timeout=_timeout, stream=True)
-                                                ContentType = opener.headers.get("Content-Type") or ""
-                                                if "text/html" in ContentType or url.rstrip("/").endswith((".html", ".htm")):
-                                                        data = b''
-                                                        for chunk in opener.iter_content(65536):
-                                                                data += chunk
-                                                                if len(data) >= 2048576:
-                                                                        break
-                                                        data = decode_page(data)
-                                                        title = getTagData("title", data)
-                                                        answer = u"Заголовок: %s" % uHTML(title).replace("\n", "")
+                                        ContentType = opener.headers.get("Content-Type") or ""
+                                        if "text/html" in ContentType or url.rstrip("/").endswith((".html", ".htm")):
+                                                data = b''
+                                                for chunk in opener.iter_content(65536):
+                                                        data += chunk
+                                                        if len(data) >= 2048576:
+                                                                break
+                                                data = _urldetect_decode(data, opener.headers)
+                                                title = getTagData("title", data)
+                                                answer = u"Заголовок: %s" % uHTML(title).replace("\n", "")
                                                 else:
                                                         Type = ContentType
                                                         Size = byteFormat(int(opener.headers.get("Content-Length") or 0))
