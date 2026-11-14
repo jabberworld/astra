@@ -174,10 +174,10 @@ def initialize_file(name, data = "{}"):
         if os.path.exists(name):
                 if data:
                         try:
-                                with open(name, "r") as fp:
+                                with open(name, "r", encoding='utf-8') as fp:
                                         exist = fp.read().strip()
                                 if not exist:
-                                        with open(name, "w") as fp:
+                                        with open(name, "w", encoding='utf-8') as fp:
                                                 INFA['fcr'] += 1
                                                 fp.write(data)
                         except:
@@ -188,7 +188,7 @@ def initialize_file(name, data = "{}"):
                 folder = os.path.dirname(name)
                 if folder and not os.path.exists(folder):
                         os.makedirs(folder, 0o755)
-                with open(name, "w") as fp:
+                with open(name, "w", encoding='utf-8') as fp:
                         INFA['fcr'] += 1
                         fp.write(data)
         except:
@@ -197,7 +197,7 @@ def initialize_file(name, data = "{}"):
         return True
 
 def read_file(name):
-        with open(chkFile(name), "r") as fp:
+        with open(chkFile(name), "r", encoding='utf-8') as fp:
                 INFA['fr'] += 1
                 data = fp.read()
         if data.startswith('\ufeff'):
@@ -218,7 +218,8 @@ def load_file(name, default = None):
 
 def write_file(name, data, mode = "w"):
         with wsmph:
-                with open(chkFile(name), mode) as fp:
+                kwargs = {} if 'b' in mode else {'encoding': 'utf-8'}
+                with open(chkFile(name), mode, **kwargs) as fp:
                         INFA['fw'] += 1
                         fp.write(data)
 
@@ -414,7 +415,8 @@ def Thread_Run(Thr, handler, command = None):
 
 def execute_handler(handler_instance, list = (), command = None):
         try:
-                handler_instance(*list)
+                with smph:
+                        handler_instance(*list)
         except (SystemExit, KeyboardInterrupt):
                 pass
         except Exception:
@@ -426,15 +428,13 @@ def get_Thr_id(handler):
 
 def call_message_handlers(stanza, typ, source, body):
         for handler in MESSAGE_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (stanza, typ, source, body,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (stanza, typ, source, body,),))
+                Thread_Run(Thr, handler)
 
 def call_outgoing_message_handlers(target, body, obody):
         for handler in OUTGOING_MESSAGE_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (target, body, obody,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (target, body, obody,),))
+                Thread_Run(Thr, handler)
 
 def call_join_handlers(conf, nick, afl, role, status = None, text = None):
         for handler in JOIN_HANDLERS:
@@ -442,45 +442,38 @@ def call_join_handlers(conf, nick, afl, role, status = None, text = None):
                         ls = (conf, nick, afl, role, status, text,)
                 else:
                         ls = (conf, nick, afl, role,)
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, ls,))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, ls,))
+                Thread_Run(Thr, handler)
 
 def call_newrole_handlers(conf, nick, role, reason):
         for handler in NEWROLE_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, nick, role, reason,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, nick, role, reason,),))
+                Thread_Run(Thr, handler)
 
 def call_newstatus_handlers(conf, nick, status, priority, text):
         for handler in NEWSTATUS_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, nick, status, priority, text,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, nick, status, priority, text,),))
+                Thread_Run(Thr, handler)
 
 def call_newnick_handlers(conf, old_nick, nick):
         for handler in NEWNICK_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, old_nick, nick,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, old_nick, nick,),))
+                Thread_Run(Thr, handler)
 
 def call_leave_handlers(conf, nick, reason, code):
         for handler in LEAVE_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, nick, reason, code,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (conf, nick, reason, code,),))
+                Thread_Run(Thr, handler)
 
 def call_iq_handlers(iq):
         for handler in IQ_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (iq,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (iq,),))
+                Thread_Run(Thr, handler)
 
 def call_presence_handlers(prs):
         for handler in PRESENCE_HANDLERS:
-                with smph:
-                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (prs,),))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (prs,),))
+                Thread_Run(Thr, handler)
 
 def call_stage_init(num, conf = None):
         for handler in eval("STAGE%d_INIT" % num):
@@ -521,9 +514,8 @@ def _run_command(command, typ, source, body, callee = None, silent = False):
                 real_access = COMMANDS[command]['access']
         if has_access(source[0], real_access, source[1]):
                 handler = COMMAND_HANDLERS[command]
-                with smph:
-                        Thr = threading.Thread(target = execute_handler, args = (handler, (typ, source, body), command,))
-                        Thread_Run(Thr, handler)
+                Thr = threading.Thread(target = execute_handler, args = (handler, (typ, source, body), command,))
+                Thread_Run(Thr, handler)
                 COMMSTAT[command]['col'] += 1
                 jid = handler_jid(source[0])
                 if jid not in COMMSTAT[command]['users']:
@@ -1057,9 +1049,8 @@ def MESSAGE_PROCESSING(client, stanza):
                 raise xmpp.NodeProcessed()
         if stanza.getTag('result') is not None and MAM_HANDLERS:
                 for handler in list(MAM_HANDLERS):
-                        with smph:
-                                Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (stanza, fromjid, instance,),))
-                                Thread_Run(Thr, handler)
+                        Thr = threading.Thread(None, execute_handler, get_Thr_id(handler), (handler, (stanza, fromjid, instance,),))
+                        Thread_Run(Thr, handler)
                 raise xmpp.NodeProcessed()
         if stanza.getTimestamp():
                 if instance in CONF_HISTORY_UNTIL and time.time() <= CONF_HISTORY_UNTIL[instance]:
@@ -1358,17 +1349,19 @@ KAZARMA_COL = {}
 STENA_COL = {}
 
 def proces_igra():
-   while START_IGRA:
+   while True:
       time.sleep(180)
+      if not START_JID:
+         continue
       for x in list(START_JID):
-         WOOD[x] += 1 * int(WOOD_COL[x])
-         with open('dynamic/wood.txt', 'w') as fp: fp.write(str(WOOD))
-         STONE[x] += 1 * int(STONE_COL[x])
-         with open('dynamic/stone.txt', 'w') as fp: fp.write(str(STONE))
-         IRON[x] += 1 * int(IRON_COL[x])
-         with open('dynamic/iron.txt', 'w') as fp: fp.write(str(IRON))
-         EAT[x] += 1 * int(EAT_COL[x])
-         with open('dynamic/eat.txt', 'w') as fp: fp.write(str(EAT))
+         WOOD[x] = WOOD.get(x, 0) + int(WOOD_COL.get(x, 0))
+         STONE[x] = STONE.get(x, 0) + int(STONE_COL.get(x, 0))
+         IRON[x] = IRON.get(x, 0) + int(IRON_COL.get(x, 0))
+         EAT[x] = EAT.get(x, 0) + int(EAT_COL.get(x, 0))
+      write_file('dynamic/wood.txt', str(WOOD))
+      write_file('dynamic/stone.txt', str(STONE))
+      write_file('dynamic/iron.txt', str(IRON))
+      write_file('dynamic/eat.txt', str(EAT))
 
 ## actions start.
 def starting_actions():

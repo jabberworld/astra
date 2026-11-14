@@ -109,7 +109,7 @@ class MacroCommands:
 def read_file(filename):
 	filename = chkFile(filename)
 	try:
-		fl = open(filename, 'r')
+		fl = open(filename, 'r', encoding='utf-8')
 		data = fl.read()
 		fl.close()
 	except:
@@ -119,7 +119,7 @@ def read_file(filename):
 def write_file(filename, data):
 	filename = chkFile(filename)
 	try:
-		fl = open(filename, 'w')
+		fl = open(filename, 'w', encoding='utf-8')
 		fl.write(data)
 		fl.close()
 	except:
