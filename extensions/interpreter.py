@@ -32,7 +32,7 @@ def pyShell(mType, source, cmd):
    jid = handler_jid(source[0])
    if jid in [u'saranskcity@jabber.ru']:
       if os.name == "posix":
-         cmd = "sh -c \"%s\" 2>&1" % (cmd.encode("utf-8"))
+         cmd = "sh -c \"%s\" 2>&1" % (cmd)
       shell = os.popen(cmd)
       result = shell.read()
       if not result: result = "Done."

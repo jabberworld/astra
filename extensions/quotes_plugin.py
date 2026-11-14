@@ -33,9 +33,9 @@ def hnd_lust_ru(type,source,parameters):
         #http://www.notproud.ru/lust/
         try:
                 req = urllib2.Request('http://www.notproud.ru/random.html')
-                req.add_header = ('User-agent', 'Mozilla/5.0')
+                req.add_header('User-agent', 'Mozilla/5.0')
                 r = urllib2.urlopen(req)
-                text = r.read()
+                text = r.read().decode('cp1251', 'replace')
                 od = re.search('<td align="left" valign="top" class="font2">',text)
                 rep = text[od.end():]
                 rep = rep[:re.search('</tr>',rep).start()]

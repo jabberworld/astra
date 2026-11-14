@@ -5,6 +5,8 @@ LASTSPAM1 = {}
 
 SP_STOP_TIM = {}
 
+PUBLIC_LOG_DIR = globals().get('PUBLIC_LOG_DIR', 'logs')
+
 
 def generate_iq(_len = None, sg = None):
   if sg == None:
@@ -78,13 +80,14 @@ def spam_serv(type, source, parameters):
 
 def spame_jid_log(jid,parameters):
   (year, month, day, hour, minute, second, weekday, yearday, daylightsavings) = time.localtime()
-  if not os.path.exists(PUBLIC_LOG_DIR+'/spamjid/'+str(month)):
-    os.makedirs(PUBLIC_LOG_DIR+'/spamjid/'+str(month))
+  logdir = os.path.join(PUBLIC_LOG_DIR, 'spamjid', str(month))
+  if not os.path.exists(logdir):
+    os.makedirs(logdir)
   tm=str(hour)+':'+str(minute)+':'+str(second)
-  fName='%s/%s/%s.html'%(PUBLIC_LOG_DIR+'/spamjid',month,day)
-  try: open(fName)
-  except:
-    open(fName,'w').write("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  fName='%s/%s/%s.html'%(os.path.join(PUBLIC_LOG_DIR, 'spamjid'),month,day)
+  if not os.path.exists(fName):
+    with open(fName,'w',encoding='utf-8') as fp:
+      fp.write("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xml:lang="ru-RU" lang="ru-RU" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta content="text/html; charset=utf-8" http-equiv="content-type" />
@@ -93,8 +96,8 @@ def spame_jid_log(jid,parameters):
     <body>
 <table border="1"><tr><th>time</th><th>who</th><th>text</th></tr>
 """)
-  text='<pre>%s</pre>'%parameters
-  open(fName,'a').write((u"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n"%(tm,jid,parameters)).encode('utf-8'))
+  with open(fName,'a',encoding='utf-8') as fp:
+    fp.write(u"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n"%(tm,jid,parameters))
 
 register_command_handler(handler_spamjid_go, '.спамжид', ['все'], 80, 'регистрирует отдельного бота и спамит с него на указанную учетку 10 минут.', 'спамжид <jid> <количество_ботов>', ['спамжид 40tman@jabber.perm.ru 10'])
 register_command_handler(spam_serv, '.спамжид_серв', ['все'], 100, 'Удаляет/добавляет сервер для спама на jid', 'спамжид_серв <сервер>', ['спамжид_серв aqq.eu'])

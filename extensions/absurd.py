@@ -8,10 +8,13 @@
 # http://jabbrik.ru
 # ReCoded by: WitcherGeralt (WitcherGeralt@jabber.ru)
 
+from urllib.parse import quote
+
+
 def handler_absurd(type, source, body):
         if body:
                 try:
-                        data = read_url('http://absurdopedia.wikia.com/wiki/%s' % ((body.replace(' ', '_')).encode('utf-8')), 'Mozilla/5.0')
+                        data = read_url('http://absurdopedia.wikia.com/wiki/%s' % quote(body.replace(' ', '_')), 'Mozilla/5.0')
                         data = re_search(data, '<meta name="description" content="', '" />')
                         data = replace_all(data, {'<': '', '" target="_blank">': '\n', '>': ' ', '&': '', '_': '', '#': ''})
                         reply(type, source, unicode(data, 'UTF-8'))

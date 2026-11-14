@@ -7,11 +7,14 @@
 # Author: ferym (ferym@jabbim.org.ru)
 # Ported from Isida by: WitcherGeralt (WitcherGeralt@jabber.ru)
 
+from urllib.parse import quote
+
+
 def handler_price(type, source, body):
         if body:
                 if not body.count('http://'):
                         try:
-                                data = re_search(read_url('http://www.webvaluer.org/ru/www.%s' % (body.encode('utf-8')), 'Mozilla/5.0'), '<span style=\"color:green; font-weight:bold;\">', '</span></h1>')
+                                data = re_search(read_url('http://www.webvaluer.org/ru/www.%s' % quote(body), 'Mozilla/5.0'), '<span style=\"color:green; font-weight:bold;\">', '</span></h1>')
                                 repl = unicode(data.replace(',', ''), 'UTF-8')
                                 respl = repl.split()
                                 if len(respl) >= 2:
