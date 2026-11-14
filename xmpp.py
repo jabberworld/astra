@@ -20,6 +20,11 @@ from slixmpp.xmlstream.matcher import MatchXPath
 from slixmpp.xmlstream.matcher.id import MatcherId
 import xml.parsers.expat as _expat
 
+try:
+	from config import TLS_VERIFY_CERTIFICATES
+except Exception:
+	TLS_VERIFY_CERTIFICATES = True
+
 # ---------------------------------------------------------------------------
 # Exceptions (legacy xmpppy).
 # ---------------------------------------------------------------------------
@@ -817,7 +822,7 @@ class Client(object):
 	def _connect_real(self):
 		stream = slixmpp.ClientXMPP(self._jid_full, self._password)
 		try:
-			stream.verify_certificates = False
+			stream.verify_certificates = TLS_VERIFY_CERTIFICATES
 		except Exception:
 			pass
 		for plugin in ("xep_0077", "xep_0199"):

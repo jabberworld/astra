@@ -8,8 +8,8 @@ from email.mime.text import MIMEText
 
 
         
-gmail_user = 'kantyzeni@bk.ru'
-gmail_password = 'mwaapajj'
+gmail_user = globals().get('EMAIL_USER', '')
+gmail_password = globals().get('EMAIL_PASSWORD', '')
 
         # главная функция принимающая 3 параметра
         # адресат, тему письма, само сообщение 
@@ -48,6 +48,9 @@ def handler_email(type,source,parameters):
                 reply(type, source, u'команда выполняется только в привате!')
                 return
         #reply('private', source, u'мыло получено ' + mail)
+        if not gmail_user or not gmail_password:
+                reply(type, source, u'Отправка почты не настроена (EMAIL_USER/EMAIL_PASSWORD).')
+                return
         mailsp = parameters.split('&')
         #reply('private', source, mailsp[2])
         strok = u'\n ------------------------------------------------------------------------------------------- \n Отправлено при помощи бота Talisman ' + u'\n Пользователь: ' + realjid + u'\n Конференция: ' + groupchat + u'\n Внимание! Не отвечайте на данное электронное письмо!'

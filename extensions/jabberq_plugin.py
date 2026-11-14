@@ -6,7 +6,7 @@
 import urllib.request as urllib2
 import urllib.parse
 
-quote_api_key = '92aed58a4936317a594a7f386569dac9608d8f84559da13c79f768bb' # Сюда пишите ваш API-Ключ(если есть), который был получен при регистрации. -> http://jabber-quotes.ru/api .
+quote_api_key = globals().get('JABBERQ_API_KEY', '') # Сюда пишите ваш API-Ключ(если есть), который был получен при регистрации. -> http://jabber-quotes.ru/api .
 # Без API-Ключа цитаты будут попадать на одобрение при добавлении, с api-ключем - сразу в базу.
 
 quote_status = {'400 Bad Request': u'Неверный запрос.',

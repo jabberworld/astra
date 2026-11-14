@@ -27,6 +27,18 @@ PID_FILE = 'PID.txt'
 # Прокси и таймаут для сетевых запросов бота.
 # Влияет на команды: погода, рецепт, тв, тв_полностью, тв_лист, тв_найти, реферат
 # и автоопределение заголовков ссылок в конференциях.
-NETWORK_PROXY = 'socks5h://localhost:54321'
+# None или '' — без прокси.
+NETWORK_PROXY = None
 NETWORK_TIMEOUT = 20
 WEATHER_RESPONSE_FILE = 'dynamic/weather-response.html'
+
+# Проверять TLS-сертификат сервера. False — только для самоподписанных сертификатов.
+TLS_VERIFY_CERTIFICATES = True
+
+# Каталог публичных HTML-логов (spamjid и др.).
+PUBLIC_LOG_DIR = 'logs'
+
+# Секреты внешних сервисов. Заполняйте в config.py (он в .gitignore), не в этом файле.
+EMAIL_USER = ''
+EMAIL_PASSWORD = ''
+JABBERQ_API_KEY = ''
