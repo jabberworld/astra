@@ -279,7 +279,7 @@ class Macros:
 		expanded = macro.replace('$*', ' '.join(fk))
 		for i in m:
 			cmd = [x.strip() for x in i.split(',')]
-			for j in re.findall('\$[0-9]+', i):
+			for j in re.findall(r'\$[0-9]+', i):
 				index = int(j[1:]) - 1
 				if len(fk) <= index:
 					return expanded
@@ -287,7 +287,7 @@ class Macros:
 			res = self.macrocmds.proccess(cmd, source)
 			if res:
 				expanded = expanded.replace('%('+i+')', res)
-		for j in re.findall('\$[0-9]+', expanded):
+		for j in re.findall(r'\$[0-9]+', expanded):
 			index = int(j[1:]) - 1
 			if len(fk) <= index:
 				return expanded

@@ -1,7 +1,9 @@
 import sys, os, traceback
-sys.path.insert(0, '/home/opencode/workspace/astra')
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(HERE)
+sys.path.insert(0, HERE)
+sys.argv[0] = os.path.join(HERE, 'astra.py')
 import astra
-os.chdir('/home/opencode/workspace/astra')
 
 good, bad = [], []
 for plugin in sorted(os.listdir('extensions')):
