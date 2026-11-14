@@ -179,19 +179,6 @@ def print_pole(conf, jid):
 
     return board
 
-"""
-while 1:
-    a = raw_input('>')
-    if a == 'quit':
-        break
-    player_turn('test@conference.jabbrik.ru', 'gigabyte@jabbrik.ru', 'X', a)
-    out = comp_turn('test@conference.jabbrik.ru', 'gigabyte@jabbrik.ru')
-    print(print_pole('test@conference.jabbrik.ru', 'gigabyte@jabbrik.ru'))
-    a= see_if_win('test@conference.jabbrik.ru', 'gigabyte@jabbrik.ru')
-    if a:
-        print(u'Win: %s' % (a))
-        break
-"""
 
 def ttt_start_game_a(t, s, b):
         global comp_marker

@@ -4,7 +4,6 @@
 
 ## Imports.
 from __future__ import with_statement
-from urllib.request import urlopen
 from traceback import format_exc, print_exc
 import gc, os, re, sys, time, random, threading, platform
 import slixmpp
@@ -357,7 +356,6 @@ def register_stage3_init(instance):
 
 ## Old plugins compability.
 def register_command_handler(instance, command, category = [], access = 0, desc = None, syntax = None, examples = []):
-        pass  # py3: command is str
         if not command in COMMSTAT:
                 COMMSTAT[command] = {'col': 0, 'users': []}
         COMMAND_HANDLERS[command] = instance
@@ -511,67 +509,39 @@ def call_command_handlers(command, typ, source, body, callee):
       else:
          call_command_handlers1(command, typ, source, body, callee)
 
-def call_command_handlers3(command, typ, source, body):
-        real_access = COMMANDS[command]['access']
-        if real_access <= 0:
-                real_access = COMMANDS[command]['access']
-        if command in COMMAND_HANDLERS:
-                if has_access(source[0], real_access, source[1]):
-                        handler = COMMAND_HANDLERS[command]
-                        with smph:
-                                Thr = threading.Thread(target = execute_handler, args = (handler, (typ, source, body), command,))
-                                Thread_Run(Thr, handler)
-                        COMMSTAT[command]['col'] += 1
-                        jid = handler_jid(source[0])
-                        if jid not in COMMSTAT[command]['users']:
-                                COMMSTAT[command]['users'].append(jid)
-                else:
-                        if source[1] not in POL_SEX.keys():
-                                reply(typ, source, random.choice([u"Недостаточный доступ.",u"Ага, щаз прям. Разбежалась :-)",u"Неа ]:->",u"Низя тебе это трогать *GIRL_DEVIL*",u"Еще раз и Бан получишь *PUNISHED*",u"*nono*",u"нихачу",u"а еще разок :-)"]))
-                        else:
-                                reply(typ, source, u"Недостаточный доступ.")
-
 POL_SEX = {}
 
-def call_command_handlers2(command, typ, source, body):
-        real_access = COMMANDS[command]['access']
+DENY_LINES = [u"Недостаточный доступ.", u"Ага, щаз прям. Разбежалась :-)", u"Неа ]:->", u"Низя тебе это трогать *GIRL_DEVIL*", u"Еще раз и Бан получишь *PUNISHED*", u"*nono*", u"нихачу", u"а еще разок :-)"]
+
+def _run_command(command, typ, source, body, callee = None, silent = False):
+        if command not in COMMAND_HANDLERS:
+                return
+        real_access = MACROS.get_access(callee, source[1]) if callee is not None else COMMANDS[command]['access']
         if real_access <= 0:
                 real_access = COMMANDS[command]['access']
-        if command in COMMAND_HANDLERS:
-                if has_access(source[0], real_access, source[1]):
-                        handler = COMMAND_HANDLERS[command]
-                        with smph:
-                                Thr = threading.Thread(target = execute_handler, args = (handler, (typ, source, body), command,))
-                                Thread_Run(Thr, handler)
-                        COMMSTAT[command]['col'] += 1
-                        jid = handler_jid(source[0])
-                        if jid not in COMMSTAT[command]['users']:
-                                COMMSTAT[command]['users'].append(jid)
+        if has_access(source[0], real_access, source[1]):
+                handler = COMMAND_HANDLERS[command]
+                with smph:
+                        Thr = threading.Thread(target = execute_handler, args = (handler, (typ, source, body), command,))
+                        Thread_Run(Thr, handler)
+                COMMSTAT[command]['col'] += 1
+                jid = handler_jid(source[0])
+                if jid not in COMMSTAT[command]['users']:
+                        COMMSTAT[command]['users'].append(jid)
+        elif not silent:
+                if source[1] not in POL_SEX:
+                        reply(typ, source, random.choice(DENY_LINES))
                 else:
-                         return#if source[1] not in POL_SEX.keys():
-#	 	 		reply(typ, source, random.choice([u"Недостаточный доступ.",u"Ага, щаз прям. Разбежалась :-)",u"Неа ]:->",u"Низя тебе это трогать *GIRL_DEVIL*",u"Еще раз и Бан получишь *PUNISHED*",u"*nono*",u"нихачу",u"а еще разок :-)"]))
-#	 	 	else:
-#	 	 	 	reply(typ, source, u"Недостаточный доступ.")
+                        reply(typ, source, u"Недостаточный доступ.")
 
 def call_command_handlers1(command, typ, source, body, callee):
-        real_access = MACROS.get_access(callee, source[1])
-        if real_access <= 0:
-                real_access = COMMANDS[command]['access']
-        if command in COMMAND_HANDLERS:
-                if has_access(source[0], real_access, source[1]):
-                        handler = COMMAND_HANDLERS[command]
-                        with smph:
-                                Thr = threading.Thread(target = execute_handler, args = (handler, (typ, source, body), command,))
-                                Thread_Run(Thr, handler)
-                        COMMSTAT[command]['col'] += 1
-                        jid = handler_jid(source[0])
-                        if jid not in COMMSTAT[command]['users']:
-                                COMMSTAT[command]['users'].append(jid)
-                else:
-                        if source[1] not in POL_SEX.keys():
-                                reply(typ, source, random.choice([u"Недостаточный доступ.",u"Ага, щаз прям. Разбежалась :-)",u"Неа ]:->",u"Низя тебе это трогать *GIRL_DEVIL*",u"Еще раз и Бан получишь *PUNISHED*",u"*nono*",u"нихачу",u"а еще разок :-)"]))
-                        else:
-                                reply(typ, source, u"Недостаточный доступ.")
+        _run_command(command, typ, source, body, callee)
+
+def call_command_handlers2(command, typ, source, body):
+        _run_command(command, typ, source, body, silent = True)
+
+def call_command_handlers3(command, typ, source, body):
+        _run_command(command, typ, source, body)
 
 ## Plugins loader.
 def load_plugins():
@@ -661,15 +631,6 @@ def returnExc():
         else:
                 error = repr(None)
         return error
-
-read_link = lambda link: decode_page(urlopen(link).read())
-
-def re_search(body, s0, s2, s1 = r"(?:.|\s)+"):
-        comp = re.compile("%s(%s?)%s" % (s0, s1, s2), 16)
-        body = comp.search(body)
-        if body:
-                body = (body.group(1)).strip()
-        return body
 
 def handler_botnick(conf):
         if conf in BOT_NICKS:
@@ -1157,16 +1118,12 @@ def MESSAGE_PROCESSING(client, stanza):
                 raise xmpp.NodeProcessed()
         command = cbody.split()[0].lower()
         if instance in PREFIX and rcmd not in cmds:
-                 jid = handler_jid(instance)
-                 if jid != u'vlasov61292@jabber.ru':
-                          NotPfx = Prefix_state(body, bot_nick)
-                          if NotPfx or ltype == 'chat':
-                                   if not command in COMMANDS and command[:1] in ("!", "@", "#", ".", "*", "+", "`"):
-                                           command = command[1:]
-                          else:
-                                   command = command_Prefix(instance, command)
+                 NotPfx = Prefix_state(body, bot_nick)
+                 if NotPfx or ltype == 'chat':
+                          if not command in COMMANDS and command[:1] in ("!", "@", "#", ".", "*", "+", "`"):
+                                 command = command[1:]
                  else:
-                          return command
+                          command = command_Prefix(instance, command)
         if instance in COMMOFF and command in COMMOFF[instance]:
                 raise xmpp.NodeProcessed()
         if cbody.count(chr(32)):

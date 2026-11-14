@@ -152,7 +152,8 @@ class Node(object):
 		self.el.set(name, value)
 
 	def getData(self, default=None):
-		return self.el.text
+		text = self.el.text
+		return text if text is not None else default
 
 	def setData(self, data):
 		self.el.text = data
@@ -411,14 +412,11 @@ class Node(object):
 					reply.xml.append(copy.deepcopy(child))
 				except Exception:
 					pass
-			if typ == "result":
-				reply["to"] = reply["to"]
 			return Node(real=reply, el=reply.xml)
 		reply = Node("iq", attrs={"type": typ, "id": self.getID()})
 		frm = self.el.get("from")
 		if frm:
 			reply.el.set("to", frm)
-		import re as _re
 		for sub in list(self.el):
 			reply.el.append(copy.deepcopy(sub))
 		return reply
@@ -452,10 +450,6 @@ def _parent_of(root, sub):
 				if c is sub:
 					return p
 	return None
-
-
-def _local_attr(sub, name):
-	return sub.get(name)
 
 
 class Message(Node):
@@ -675,10 +669,6 @@ class Browser(object):
 
 	def setDiscoItemsHandler(self, items):
 		pass
-
-
-class HostedGroupChat(object):
-	pass
 
 
 class _features(object):
