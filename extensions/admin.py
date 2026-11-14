@@ -417,7 +417,10 @@ def crashReport_cfg(mType, source, argv):
 
 def crashReport_cfg_loader():
         if initialize_file("dynamic/creporter.txt", "1"):
-                INFO["creporter"] = read_file("dynamic/creporter.txt")
+                try:
+                        INFO["creporter"] = int(read_file("dynamic/creporter.txt").strip() or 0)
+                except Exception:
+                        INFO["creporter"] = 0
 
 #command_handler(handler_set_prefix, 30, "admin")
 command_handler(handler_admin_join, 80, "admin")
