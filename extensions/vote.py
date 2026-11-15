@@ -14,6 +14,12 @@ VOTE_FILE = 'dynamic/vote.txt'
 
 POLLINGS = {}
 
+def vote_buttons(conf):
+        pfx = (globals().get('PREFIX') or {}).get(conf) or ''
+        opinions = POLLINGS.get(conf, {}).get('opinions', {})
+        return [(u'%sмнение %s' % (pfx, num), opinions[num]['opinion'])
+                for num in sorted(opinions, key=int)]
+
 def handler_vote_vote(type, source, Params):
         jid = handler_jid(source[0])
         if source[1] in POLLINGS:
@@ -46,16 +52,17 @@ def handler_vote_newpoll(type, source, Params):
         if source[1] in POLLINGS:
                 if not POLLINGS[source[1]]['finished']:
                         poll_text = u'ТЕКУЩЕЕ ГОЛОСОВАНИЕ\nСоздатель: '+POLLINGS[source[1]]['creator']['nick']+u'\nВопрос: '+POLLINGS[source[1]]['question']+u'\nВарианты ответов:\n'
-                        for opinion in sorted(POLLINGS[source[1]]['opinions']):
+                        for opinion in sorted(POLLINGS[source[1]]['opinions'], key=int):
                                 poll_text += '\t'+opinion+'. '+POLLINGS[source[1]]['opinions'][opinion]['opinion']+'\n'
                         poll_text += u'Чтобы проголосовать, напиши номер мнения, например "мнение 1"'
-                        reply(type, source, poll_text)
+                        btns = vote_buttons(source[1]) if (not POLLINGS[source[1]]['options']['closed'] or type == 'private') else None
+                        reply(type, source, poll_text, buttons=btns)
                         return
         jid = handler_jid(source[0])
         if source[1] in POLLINGS:
                 del POLLINGS[source[1]]
         if Params:
-                globals()['POLLINGS'] = {source[1]: {'started': False, 'finished': False, 'creator': {'jid': jid, 'nick': source[2]}, 'opinions': {}, 'question': Params, 'options': {'closed': False, 'nicks': False, 'admedit': False, 'time': {'time': 0, 'start': 0}}, 'tick': None, 'jids':{}}}
+                POLLINGS[source[1]] = {'started': False, 'finished': False, 'creator': {'jid': jid, 'nick': source[2]}, 'opinions': {}, 'question': Params, 'options': {'closed': False, 'nicks': False, 'admedit': False, 'time': {'time': 0, 'start': 0}}, 'tick': None, 'jids':{}}
                 reply(type, source, u'Голосование создано!\nЧтобы добавить пункты напиши "пункт + твой_пункт". Удалить - "пункт - номер пункта".\nОпции голосования - команда "голосование*". Начать голосование - команда "голосование+". Посмотреть текущие результаты - команда "мнения". Окончить голосование - команда "итоги".\nЕсли что-то непонятно, то прочитай хелп по командам из категории "голосование"!')
                 vote_save(source[1])
         else:
@@ -224,10 +231,10 @@ def handler_vote_join(conf, nick, afl, role):
                         if not jid in POLLINGS[conf]['jids']:
                                 POLLINGS[conf]['jids'][jid] = {'isnotified': True, 'isvoted': False}
                                 poll_text = u'ТЕКУЩЕЕ ГОЛОСОВАНИЕ\nСоздатель: '+POLLINGS[conf]['creator']['nick']+u'\nВопрос: '+POLLINGS[conf]['question']+u'\nВарианты ответов:\n'
-                                for opinion in sorted(POLLINGS[conf]['opinions']):
+                                for opinion in sorted(POLLINGS[conf]['opinions'], key=int):
                                         poll_text += '\t'+opinion+'. '+POLLINGS[conf]['opinions'][opinion]['opinion']+'\n'
                                 poll_text += u'Чтобы проголосовать, напиши номер мнения, например "мнение 1"'
-                                msg(conf+'/'+nick, poll_text)
+                                msg(conf+'/'+nick, poll_text, buttons=vote_buttons(conf))
                                 vote_save(conf)
 
 def handler_poll_start_stop(type, source, body):
@@ -235,7 +242,7 @@ def handler_poll_start_stop(type, source, body):
                 args = body.split(' ')[0].strip()
                 Params = body[(body.find(' ') + 1):].strip()
                 jid = handler_jid(source[0])
-                if args == 'start' or args == u'стоп':
+                if args in ('start', u'старт'):
                         if source[1] not in POLLINGS:
                                 reply(type, source, u'сейчас нет никаких голосований')
                         elif POLLINGS[source[1]]['started']:
@@ -247,10 +254,11 @@ def handler_poll_start_stop(type, source, body):
                         elif jid in ADLIST or POLLINGS[source[1]]['creator']['jid'] == jid or POLLINGS[source[1]]['options']['admedit'] == True and has_access(jid, 20, source[1]):
                                 POLLINGS[source[1]]['started'] = True
                                 poll_text = u'НОВОЕ ГОЛОСОВАНИЕ\nСоздатель: '+POLLINGS[source[1]]['creator']['nick']+u'\nВопрос: '+POLLINGS[source[1]]['question']+u'\nВарианты ответов:\n'
-                                for opinion in sorted(POLLINGS[source[1]]['opinions']):
+                                for opinion in sorted(POLLINGS[source[1]]['opinions'], key=int):
                                         poll_text += '\t'+opinion+'. '+POLLINGS[source[1]]['opinions'][opinion]['opinion']+'\n'
                                 poll_text += u'Чтобы проголосовать, напиши номер мнения, например "мнение 1"'
-                                msg(source[1], poll_text)
+                                btns = vote_buttons(source[1]) if not POLLINGS[source[1]]['options']['closed'] else None
+                                msg(source[1], poll_text, buttons=btns)
                                 if POLLINGS[source[1]]['options']['time']['time']:
                                         if POLLINGS[source[1]]['tick']:
                                                 if POLLINGS[source[1]]['tick'].is_alive():
@@ -260,7 +268,7 @@ def handler_poll_start_stop(type, source, body):
                                 vote_save(source[1])
                         else:
                                 reply(type, source, u'ага, щаззз')
-                elif args == 'stop' or args == u'стоп':
+                elif args in ('stop', u'стоп'):
                         if source[1] in POLLINGS:
                                 if POLLINGS[source[1]]['finished']:
                                         reply(type, source, u'неприменимо к оконченному голосованию')
@@ -307,12 +315,17 @@ def vote_tick(timee, conf, start = True):
         vote_save(conf)
 
 def vote_save(conf):
-        write_file(VOTE_FILE, str(POLLINGS))
+        snapshot = {}
+        for c, p in POLLINGS.items():
+                d = dict(p)
+                d['tick'] = None
+                snapshot[c] = d
+        write_file(VOTE_FILE, str(snapshot))
 
 def vote_results(conf):
         answ, cnt, allv = [], 0, 0
         poll_text = u'\nСоздатель: '+POLLINGS[conf]['creator']['nick']+u'\nВопрос: '+POLLINGS[conf]['question']+u'\nИтоги:\n'
-        for opinion in POLLINGS[conf]['opinions']:
+        for opinion in sorted(POLLINGS[conf]['opinions'], key=int):
                 if POLLINGS[conf]['options']['nicks']:
                         answ.append([POLLINGS[conf]['opinions'][opinion]['cnt'], opinion+'. '+POLLINGS[conf]['opinions'][opinion]['opinion'], ', '.join(sorted(POLLINGS[conf]['opinions'][opinion]['nicks']))])
                 else:
