@@ -19,7 +19,7 @@ def menu_taro(t,s,p):
       mes += u'\n• 2 - Линия времени.'
       mes += u'\n• 3 - Помощь.'
       mes += u'\n• 0 - Выход.'
-      reply(t,s,mes)
+      reply(t,s,mes, buttons=[('1',u'Совет'),('2',u'Линия времени'),('3',u'Помощь'),('0',u'Выход')])
       time.sleep(300)
       if s[1] in TARO_C:
          taro_menu_ex(t,s,p)

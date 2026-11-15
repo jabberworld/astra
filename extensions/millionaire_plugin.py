@@ -211,14 +211,16 @@ def millionaire_make_question(type, source, jid):
         ls=range(4)
         random.shuffle(ls)
         num=1
+        buttons=[]
         for x in ls:
                 a = answ[x]
                 if a[0] == '+':
                         MILLIONAIRE[source[1]][jid]['answer'] = num
                 rep += '\n' + str(num) + ') ' + a[1:]
+                buttons.append((str(num), a[1:]))
                 num+=1
         millionaire_write(source[1],jid)
-        reply(type, source, rep)
+        reply(type, source, rep, buttons=buttons)
         return
 
 
@@ -260,7 +262,7 @@ def handler_millionaire_chat(raw, type, source, parameters):
                                 millionaire_get_new_question(type, source, jid)
                                 millionaire_write(source[1],jid)
                                 time.sleep(3)
-                                reply(type, source, u'Хотите сыграть еще?\n7) да!\n8) нет.')
+                                reply(type, source, u'Хотите сыграть еще?\n7) да!\n8) нет.', buttons=[('7',u'да'),('8',u'нет')])
                                 
                         else:
                                 MILLIONAIRE[source[1]][jid]['stage'] += 1
@@ -328,7 +330,7 @@ def handler_millionaire_chat(raw, type, source, parameters):
                         millionaire_get_new_question(type, source, jid)
                         millionaire_write(source[1],jid)
                         time.sleep(3)
-                        reply(type, source, u'Хотите сыграть еще?\n7) да\n8) нет')			
+                        reply(type, source, u'Хотите сыграть еще?\n7) да\n8) нет', buttons=[('7',u'да'),('8',u'нет')])			
 
                         
                         

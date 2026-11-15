@@ -274,7 +274,8 @@ def handler_timeup_info(type, source, body):
 STATISTIKA = {}
 
 def handler_botup_info1(type, source, body):
-   reply(type,source,u'Меню статистики:\n• 1 - ботап\n• 2 - время работы\n• 3 - статистика команд\n• 4 - потоки\n• 0 - выход')
+   reply(type,source,u'Меню статистики:\n• 1 - ботап\n• 2 - время работы\n• 3 - статистика команд\n• 4 - потоки\n• 0 - выход',
+         buttons=[('1',u'ботап'),('2',u'время работы'),('3',u'статистика команд'),('4',u'потоки'),('0',u'выход')])
    STATISTIKA[source[1]] = 1
    if source[1] in STATISTIKA.keys():
       register_command_handler(handler_botup_info, '1', [], 10, '', '', [''])
