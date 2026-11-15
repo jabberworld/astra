@@ -35,6 +35,9 @@ WEATHER_RESPONSE_FILE = 'dynamic/weather-response.html'
 # Проверять TLS-сертификат сервера. False — только для самоподписанных сертификатов.
 TLS_VERIFY_CERTIFICATES = True
 
+# Кнопки быстрого ответа XEP-0439 (urn:xmpp:tmp:quick-response) в меню бота.
+QUICK_RESPONSE_BUTTONS = True
+
 # Каталог публичных HTML-логов (spamjid и др.).
 PUBLIC_LOG_DIR = 'logs'
 

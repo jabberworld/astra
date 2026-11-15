@@ -86,6 +86,8 @@ from config import *
 ## Fallbacks for plugins reading network settings from globals (see webtools).
 NETWORK_PROXY = globals().get('NETWORK_PROXY')
 NETWORK_TIMEOUT = globals().get('NETWORK_TIMEOUT', 20)
+## XEP-0439 quick-response buttons (see msg/reply).
+QUICK_RESPONSE_BUTTONS = globals().get('QUICK_RESPONSE_BUTTONS', True)
 
 BOT_PID = os.getpid()
 
@@ -850,7 +852,7 @@ def delivery(body):
                 write_file('delivery.txt', body, 'a')
 
 
-def msg(target, body):
+def msg(target, body, buttons = None):
         if isinstance(body, bytes):
                 body = body.decode('utf-8', 'replace')
         obody = body
@@ -863,13 +865,17 @@ def msg(target, body):
                 ltype = 'chat'
                 if len(body) > PRIV_MSG_LIMIT:
                         body = handler_rebody(target, body, ltype)
-        JCON.send(xmpp.Message(target, body.strip(), ltype))
+        stanza = xmpp.Message(target, body.strip(), ltype)
+        if buttons and QUICK_RESPONSE_BUTTONS:
+                for value, label in buttons:
+                        stanza.addChild('response', attrs = {'value': str(value), 'label': str(label)}, namespace = xmpp.NS_QUICK_RESPONSE)
+        JCON.send(stanza)
         INFA['outmsg'] += 1
         call_outgoing_message_handlers(target, body, obody)
 
 A_NAME = {}
 
-def reply(ltype, source, body):
+def reply(ltype, source, body, buttons = None):
         if isinstance(body, bytes):
                 body = body.decode('utf-8', 'replace')
         if ltype == 'public':
@@ -877,12 +883,12 @@ def reply(ltype, source, body):
                 jid = handler_jid(source[0])
                 if jid in A_NAME.keys():
                         body = '%s, %s' % (str.join('',A_NAME[jid]), body)
-                        msg(source[1], body)
+                        msg(source[1], body, buttons)
                 else:
                         body = '%s, %s' % (source[2], body)
-                        msg(source[1], body)
+                        msg(source[1], body, buttons)
         elif ltype == 'private':
-                msg(source[0], body)
+                msg(source[0], body, buttons)
 
 def send_unavailable(status):
         Presence = xmpp.Presence(None, 'unavailable')

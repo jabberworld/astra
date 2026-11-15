@@ -77,6 +77,7 @@ NS_RETRACT = "urn:xmpp:message-retract:1"
 NS_FASTEN = "urn:xmpp:fasten:0"
 NS_MODERATE_0 = "urn:xmpp:message-moderate:0"
 NS_RETRACT_0 = "urn:xmpp:message-retract:0"
+NS_QUICK_RESPONSE = "urn:xmpp:tmp:quick-response"
 
 
 def _nsjump(nsmap):
@@ -1098,6 +1099,8 @@ NS = {"CLIENT": NS_CLIENT, "MESSAGE": NS_MESSAGE, "PRESENCE": NS_PRESENCE, "IQ":
 	  "MUC_USER": NS_MUC_USER, "MUC_ADMIN": NS_MUC_ADMIN, "MUC_OWNER": NS_MUC_OWNER,
 	  "MUC_ROOMCONFIG": NS_MUC_ROOMCONFIG, "CAPS": NS_CAPS, "DATA": NS_DATA,
 	  "URN_TIME": NS_URN_TIME, "PING": NS_PING}
+
+NS["QUICK_RESPONSE"] = NS_QUICK_RESPONSE
 
 protocol.Client = Client
 protocol.Node = Node
