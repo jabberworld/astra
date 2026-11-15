@@ -63,7 +63,7 @@ def command_help(type, source, body):
                  reply(type,source,u'✯✯✯ Вы находитесь в меню справки, выберите действие:\n ☞ 1 - Команды бота;\n ☞ 2 - список макро;\n ☞ 3 - Подробная справка;\n ☞ 4 - О боте;\n ☞ 5 - Создание своих команд;\n ☞ 6 - Тамагочи;\n ☞ 7 - Адрес конференции поддержки бота;\n ☞ 8 - Написать ботоводу;\n ☞ 0 - Выход.\n✯✯✯')
                  if source[1] in HELP_TIME.keys():
                           register_command_handler(command_comlist2, '1', [], 10, '', '', [''])
-                          register_command_handler(macrolist_handler11, '2', [], 10, '', '', [''])
+                          register_command_handler(macrolist_handler, '2', [], 10, '', '', [''])
                           register_command_handler(spravka_help, '3', [], 10, '', '', [''])
                           register_command_handler(o_bot, '4', [], 10, '', '', [''])
                           register_command_handler(svoi_commands, '5', [], 10, '', '', [''])
