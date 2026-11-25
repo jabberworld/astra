@@ -221,8 +221,12 @@ def karma_scan(w, t, s, b):
                 return
         nk = b[:-2]
         nk = nk.strip()
+        if not nk:
+                return
         if nk[-1] in [':', ',']:
-                nk = nk[:-1]
+                nk = nk[:-1].strip()
+                if not nk:
+                        return
         
         for c in GROUPCHATS.keys():
                 for n in GROUPCHATS[c].keys():
